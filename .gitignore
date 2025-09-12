@@ -1,0 +1,22 @@
+/.metadata/
+
+# Eclipse
+.classpath
+.project
+.settings/
+*.log
+
+# Java
+# Arquivos de bytecode compilados
+*.class
+
+# Pastas de build
+/bin/
+/target/
+
+# Outros arquivos de IDEs (IntelliJ IDEA, VS Code)
+.idea/
+.vscode/
+
+# Ignorar o arquivo de conexão com as credenciais
+ConexaoSQL.java
