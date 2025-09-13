@@ -143,7 +143,8 @@ public class Login extends JFrame {
 
 		if (cliente != null && cliente.getSenha().equals(senha)) {
 			JOptionPane.showMessageDialog(this, "Login realizado com sucesso!");
-			// Aqui você pode abrir a tela principal do sistema
+		    dispose(); // fecha a tela de login
+		    new DashboardCliente().setVisible(true); // abre o DashboardCliente
 		} else {
 			JOptionPane.showMessageDialog(this, "CPF ou senha inválidos!", "Erro", JOptionPane.ERROR_MESSAGE);
 		}
