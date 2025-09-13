@@ -86,3 +86,14 @@ create table pagamento (
     idVistoria int not null unique,
     constraint fk_pagamento_vistoria foreign key (idVistoria) references vistoria(idVistoria)
 );
+-- =========================
+-- Laudo Vistoria
+-- =========================
+-- aqui vai ficar os dados da vistoria e valor para o pagamento que serão gerados em pdf
+create table laudo(
+	idLaudo int primary key auto_increment,
+    caminho_arquivo varchar(255),
+    data_geracao datetime not null,
+    idVistoria int not null unique,
+    constraint fk_laudo_vistoria foreign key(idVistoria) references vistoria(idVistoria)
+);
