@@ -6,150 +6,157 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import Vistoria.Controller.ClienteController;
+import Vistoria.Model.Cliente;
+
 public class Login extends JFrame {
 
-    private static final long serialVersionUID = 1L;
-    private JPanel contentPane;
-    private JTextField txtUsuario;
-    private JPasswordField txtSenha;
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField txtUsuario;
+	private JPasswordField txtSenha;
+	private ClienteController controller;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                Login frame = new Login();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	public Login() {
+		setTitle("Login - Sistema Vistoria");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(800, 600);
+		setResizable(false);
+		setLocationRelativeTo(null);
 
-    public Login() {
-        setType(Type.UTILITY);
-        setTitle("Login - Sistema Vistoria");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		controller = new ClienteController();
 
-        // >>> tamanho fixo
-        setSize(800, 600);
-        setResizable(false);
-        setLocationRelativeTo(null);
+		contentPane = new JPanel(new BorderLayout());
+		setContentPane(contentPane);
 
-        contentPane = new JPanel(new BorderLayout());
-        setContentPane(contentPane);
+		// Painel lateral esquerdo
+		JPanel panelLeft = new JPanel();
+		panelLeft.setBackground(new Color(187, 208, 235));
+		panelLeft.setPreferredSize(new Dimension(300, 200));
+		panelLeft.setLayout(new GridBagLayout());
 
-        // Painel lateral colorido
-        JPanel panelLeft = new JPanel();
-        panelLeft.setBackground(new Color(187, 208, 235));
-        panelLeft.setPreferredSize(new Dimension(300, 200));
-        panelLeft.setLayout(new GridBagLayout());
-        
-        // Cria o ImageIcon original a partir do recurso
-        ImageIcon originalIcon = new ImageIcon(Login.class.getResource("/imagens/logo.png"));
+		// Logo
+		ImageIcon originalIcon = new ImageIcon(Login.class.getResource("/imagens/logo.png"));
+		Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+		JLabel logo = new JLabel(new ImageIcon(scaledImage));
+		GridBagConstraints gbcLogo = new GridBagConstraints();
+		gbcLogo.gridx = 0;
+		gbcLogo.gridy = 0;
+		gbcLogo.insets = new Insets(0, 0, 5, 0);
+		panelLeft.add(logo, gbcLogo);
 
-        // Obtém a imagem do ícone original
-        Image originalImage = originalIcon.getImage();
+		JLabel lblSistema = new JLabel("Sistema de Vistoria Veicular");
+		lblSistema.setFont(new Font("Arial", Font.BOLD, 16));
+		lblSistema.setForeground(Color.DARK_GRAY);
+		GridBagConstraints gbcTitulo = new GridBagConstraints();
+		gbcTitulo.gridx = 0;
+		gbcTitulo.gridy = 1;
+		gbcTitulo.insets = new Insets(0, 0, 5, 0);
+		panelLeft.add(lblSistema, gbcTitulo);
 
-        // Redimensiona a imagem para o novo tamanho (ex: 200x150)
-        // O Image.SCALE_SMOOTH melhora a qualidade da imagem redimensionada
-        Image scaledImage = originalImage.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+		JLabel lblVersao = new JLabel("V1.0");
+		lblVersao.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblVersao.setForeground(Color.WHITE);
+		GridBagConstraints gbcVersao = new GridBagConstraints();
+		gbcVersao.gridx = 0;
+		gbcVersao.gridy = 2;
+		panelLeft.add(lblVersao, gbcVersao);
 
-        // Cria um novo ImageIcon a partir da imagem redimensionada
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+		contentPane.add(panelLeft, BorderLayout.WEST);
 
-        // Cria o JLabel e define o novo ícone redimensionado
-        JLabel logo = new JLabel("");
-        logo.setHorizontalAlignment(SwingConstants.CENTER);
-        logo.setIcon(scaledIcon);
+		// Painel de login
+		JPanel panelRight = new JPanel();
+		panelRight.setBackground(Color.WHITE);
+		panelRight.setBorder(new EmptyBorder(30, 30, 30, 30));
+		contentPane.add(panelRight, BorderLayout.CENTER);
 
-        // O restante do código para adicionar o JLabel ao painel continua o mesmo
-        GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
-        gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 0);
-        gbc_lblNewLabel_1.gridx = 0;
-        gbc_lblNewLabel_1.gridy = 0;
-        panelLeft.add(logo, gbc_lblNewLabel_1);
-        
-                JLabel lblLogo = new JLabel("Sistema de Vistoria Veicular");
-                lblLogo.setFont(new Font("Arial", Font.BOLD, 16));
-                lblLogo.setForeground(Color.DARK_GRAY);
-                GridBagConstraints gbc_lblLogo = new GridBagConstraints();
-                gbc_lblLogo.insets = new Insets(0, 0, 5, 0);
-                gbc_lblLogo.gridx = 0;
-                gbc_lblLogo.gridy = 1;
-                panelLeft.add(lblLogo, gbc_lblLogo);
+		JLabel Titulo = new JLabel("Acesso ao Sistema");
+		Titulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
-        contentPane.add(panelLeft, BorderLayout.WEST);
-        
-                JLabel lblNewLabel = new JLabel("V1.0");
-                lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-                lblNewLabel.setForeground(Color.WHITE);
-                GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-                gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
-                gbc_lblNewLabel.gridx = 0;
-                gbc_lblNewLabel.gridy = 2;
-                panelLeft.add(lblNewLabel, gbc_lblNewLabel);
+		JLabel lblUsuario = new JLabel("CPF:");
+		txtUsuario = new JTextField(15);
 
-        // Painel de login
-        JPanel panelRight = new JPanel();
-        panelRight.setBackground(Color.WHITE);
-        panelRight.setBorder(new EmptyBorder(30, 30, 30, 30));
-        contentPane.add(panelRight, BorderLayout.CENTER);
+		JLabel lblSenha = new JLabel("Senha:");
+		txtSenha = new JPasswordField(15);
 
-        JLabel lblTitulo = new JLabel("Acesso ao Sistema");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		JButton btnLogin = new JButton("Entrar");
+		btnLogin.setBackground(new Color(140, 204, 251));
+		btnLogin.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		btnLogin.setFocusPainted(false);
+		getRootPane().setDefaultButton(btnLogin);
 
-        JLabel lblUsuario = new JLabel("CPF/Matrícula:");
-        txtUsuario = new JTextField(15);
+		// "Cadastrar" como link clicável
+		JLabel lblCadastro = new JLabel("<HTML><U>Cadastrar</U></HTML>");
+		lblCadastro.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblCadastro.setForeground(Color.BLUE);
+		lblCadastro.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        JLabel lblSenha = new JLabel("Senha:");
-        txtSenha = new JPasswordField(15);
+		lblCadastro.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				dispose();
+				new CadastroCliente().setVisible(true);
+			}
+		});
 
-        JButton btnLogin = new JButton("Entrar");
-        btnLogin.setBackground(new Color(140, 204, 251));
-        btnLogin.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnLogin.setFocusPainted(false);
+		// Evento do botão Login
+		btnLogin.addActionListener(e -> autenticar());
 
-        // >>> Enter ativa o botão
-        getRootPane().setDefaultButton(btnLogin);
+		// Layout
+		GroupLayout gl = new GroupLayout(panelRight);
+		gl.setHorizontalGroup(
+				gl.createParallelGroup(Alignment.LEADING)
+						.addGroup(
+								gl.createSequentialGroup().addGap(120)
+										.addGroup(gl.createParallelGroup(Alignment.TRAILING)
+												.addComponent(txtSenha, Alignment.LEADING, GroupLayout.PREFERRED_SIZE,
+														200, GroupLayout.PREFERRED_SIZE)
+												.addComponent(lblSenha, Alignment.LEADING)
+												.addComponent(txtUsuario, Alignment.LEADING, GroupLayout.PREFERRED_SIZE,
+														200, GroupLayout.PREFERRED_SIZE)
+												.addComponent(lblUsuario, Alignment.LEADING)))
+						.addGroup(gl.createSequentialGroup().addGap(156).addComponent(btnLogin,
+								GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
+						.addGroup(Alignment.TRAILING,
+								gl.createSequentialGroup().addContainerGap(396, Short.MAX_VALUE)
+										.addComponent(lblCadastro).addContainerGap())
+						.addGroup(gl.createSequentialGroup().addGap(138).addComponent(Titulo).addContainerGap(160,
+								Short.MAX_VALUE)));
+		gl.setVerticalGroup(gl.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl.createSequentialGroup().addGap(137).addComponent(Titulo).addGap(18)
+						.addComponent(lblUsuario).addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblSenha)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txtSenha, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE).addGap(18)
+						.addComponent(btnLogin, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED, 181, Short.MAX_VALUE).addComponent(lblCadastro)
+						.addContainerGap()));
+		panelRight.setLayout(gl);
+	}
 
-        // Layout centralizado no painel direito
-        GroupLayout gl = new GroupLayout(panelRight);
-        gl.setHorizontalGroup(
-        	gl.createParallelGroup(Alignment.LEADING)
-        		.addGroup(gl.createSequentialGroup()
-        			.addGroup(gl.createParallelGroup(Alignment.LEADING)
-        				.addGroup(gl.createSequentialGroup()
-        					.addGap(120)
-        					.addGroup(gl.createParallelGroup(Alignment.TRAILING)
-        						.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(lblUsuario, Alignment.LEADING)
-        						.addComponent(txtSenha, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(lblSenha, Alignment.LEADING)))
-        				.addGroup(gl.createSequentialGroup()
-        					.addGap(160)
-        					.addComponent(btnLogin, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
-        				.addGroup(gl.createSequentialGroup()
-        					.addGap(145)
-        					.addComponent(lblTitulo)))
-        			.addContainerGap(134, Short.MAX_VALUE))
-        );
-        gl.setVerticalGroup(
-        	gl.createParallelGroup(Alignment.LEADING)
-        		.addGroup(gl.createSequentialGroup()
-        			.addGap(149)
-        			.addComponent(lblTitulo)
-        			.addGap(18)
-        			.addComponent(lblUsuario)
-        			.addGap(1)
-        			.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-        			.addPreferredGap(ComponentPlacement.UNRELATED)
-        			.addComponent(lblSenha)
-        			.addGap(1)
-        			.addComponent(txtSenha, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-        			.addGap(34)
-        			.addComponent(btnLogin, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-        			.addContainerGap(175, Short.MAX_VALUE))
-        );
-        panelRight.setLayout(gl);
-    }
+	private void autenticar() {
+		String cpf = txtUsuario.getText().trim();
+		String senha = new String(txtSenha.getPassword());
+
+		Cliente cliente = controller.buscarClientePorCpf(cpf);
+
+		if (cliente != null && cliente.getSenha().equals(senha)) {
+			JOptionPane.showMessageDialog(this, "Login realizado com sucesso!");
+			// Aqui você pode abrir a tela principal do sistema
+		} else {
+			JOptionPane.showMessageDialog(this, "CPF ou senha inválidos!", "Erro", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(() -> {
+			try {
+				Login frame = new Login();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
 }

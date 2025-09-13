@@ -1,4 +1,4 @@
-drop database if exists sistema_vistoria_df;
+-- drop database if exists sistema_vistoria_df;
 create database sistema_vistoria_df;
 use sistema_vistoria_df;
 
