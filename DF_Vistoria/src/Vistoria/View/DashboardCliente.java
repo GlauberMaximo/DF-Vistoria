@@ -1,40 +1,54 @@
 package Vistoria.View;
 
-import java.awt.*;
+import Vistoria.Model.Cliente;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.border.EmptyBorder;
 
 public class DashboardCliente extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private JPanel panelCenter; // painel central com CardLayout
+    private JPanel panelCenter;
+    private Cliente clienteLogado;
+    
+    // Novas referências para os painéis
+    private PanelAgendarVistoria panelAgendar;
+    private PanelCadastrarVeiculo panelCadastrar;
+    private JPanel panelDashboard, panelLaudo;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                DashboardCliente frame = new DashboardCliente();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
+    // Construtor atualizado para receber o objeto Cliente
+    public DashboardCliente(Cliente cliente) {
+        this.clienteLogado = cliente;
+        setTitle("Área do Cliente - Sistema de Vistoria");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+        
+        // Adiciona um WindowListener para tratar o fechamento da janela
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int opcao = JOptionPane.showConfirmDialog(DashboardCliente.this,
+                    "Deseja realmente sair?", "Confirmação",
+                    JOptionPane.YES_NO_OPTION);
+                if (opcao == JOptionPane.YES_OPTION) {
+                    dispose();
+                    new Login().setVisible(true);
+                }
             }
         });
-    }
-
-    public DashboardCliente() {
-        setTitle("Área do Cliente - Sistema de Vistoria");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // abre maximizado
-        setLocationRelativeTo(null);
 
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        contentPane.setLayout(new BorderLayout(0, 0)); // compatível com WindowBuilder
+        contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
         // ================= MENU LATERAL ==================
         JPanel panelLeft = new JPanel();
-        panelLeft.setBackground(new Color(187, 208, 235)); // azul da sua imagem
+        panelLeft.setBackground(new Color(187, 208, 235));
         panelLeft.setPreferredSize(new Dimension(230, getHeight()));
         panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
         contentPane.add(panelLeft, BorderLayout.WEST);
@@ -62,11 +76,24 @@ public class DashboardCliente extends JFrame {
         panelLeft.add(btnSair);
 
         // ================== PAINEL CENTRAL ==================
+        
+        // CORREÇÃO: Cria um JPanel para cada JLabel
+        panelDashboard = new JPanel();
+        panelDashboard.add(new JLabel("Tela Dashboard do Cliente", SwingConstants.CENTER));
+        
+        panelLaudo = new JPanel();
+        panelLaudo.add(new JLabel("Tela Emitir Laudo", SwingConstants.CENTER));
+        
+        // Instancia os outros painéis uma única vez
+        panelAgendar = new PanelAgendarVistoria(clienteLogado);
+        panelCadastrar = new PanelCadastrarVeiculo(clienteLogado);
+
+        // Adiciona os painéis ao CardLayout
         panelCenter = new JPanel(new CardLayout());
-        panelCenter.add(new JLabel("Tela Dashboard", SwingConstants.CENTER), "Dashboard");
-        panelCenter.add(new JLabel("Tela Agendar Vistoria", SwingConstants.CENTER), "Agendar");
-        panelCenter.add(new JLabel("Tela Cadastrar Veículo", SwingConstants.CENTER), "Cadastrar");
-        panelCenter.add(new JLabel("Tela Emitir Laudo", SwingConstants.CENTER), "Laudo");
+        panelCenter.add(panelDashboard, "Dashboard");
+        panelCenter.add(panelAgendar, "Agendar");
+        panelCenter.add(panelCadastrar, "Cadastrar");
+        panelCenter.add(panelLaudo, "Laudo");
         contentPane.add(panelCenter, BorderLayout.CENTER);
 
         // ================== AÇÕES DOS BOTÕES ==================
@@ -85,7 +112,11 @@ public class DashboardCliente extends JFrame {
         });
     }
 
-    // método auxiliar para criar botões de menu
+    // Método getter público para o painel de agendamento
+    public PanelAgendarVistoria getPanelAgendar() {
+        return panelAgendar;
+    }
+    
     private JButton criarBotaoMenu(String texto, String iconPath) {
         JButton btn = new JButton(texto);
         btn.setHorizontalAlignment(SwingConstants.LEFT);
@@ -108,7 +139,6 @@ public class DashboardCliente extends JFrame {
         return btn;
     }
 
-    // método para alternar entre as telas no painel central
     private void mostrarTela(String nomeTela) {
         CardLayout cl = (CardLayout) panelCenter.getLayout();
         cl.show(panelCenter, nomeTela);

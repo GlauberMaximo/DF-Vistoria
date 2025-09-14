@@ -151,7 +151,7 @@ public class Login extends JFrame {
         if (cliente != null && cliente.getSenha().equals(senha)) {
             JOptionPane.showMessageDialog(this, "Login de cliente realizado com sucesso!");
             dispose();
-            new DashboardCliente().setVisible(true);
+            new DashboardCliente(cliente).setVisible(true);
             return;
         }
 

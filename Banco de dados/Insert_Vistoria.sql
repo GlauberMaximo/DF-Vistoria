@@ -20,12 +20,12 @@ VALUES ('ABC-1234', 'Carro', 'Ford Fusion', 'Titanium', 2018, 'ABC12345DEF678901
 
 -- Inserir agendamentos
 -- Agendamento pendente
-INSERT INTO agendamento (data_agendamento, hora, status_agendamento, idCliente, idVeiculo)
-VALUES ('2025-09-15', '10:30:00', 'Pendente', 1, 1);
+INSERT INTO agendamento (data_agendamento, hora, tipo_vistoria, status_agendamento, idCliente, idVeiculo)
+VALUES ('2025-09-15', '10:30:00', 'Vistoria Prévia', 'Pendente', 1, 1);
 
 -- Agendamento concluído (com vistoria e pagamento)
-INSERT INTO agendamento (data_agendamento, hora, status_agendamento, idCliente, idVeiculo)
-VALUES ('2025-09-01', '14:00:00', 'Concluido', 1, 1);
+INSERT INTO agendamento (data_agendamento, hora, tipo_vistoria, status_agendamento, idCliente, idVeiculo)
+VALUES ('2025-09-01', '14:00:00', 'Vistoria de Transferência', 'Concluido', 1, 1);
 
 -- Inserir vistoria para o agendamento concluído
 INSERT INTO vistoria (data_vistoria, resultado, observacoes, idAgendamento, idFuncionario)
@@ -36,8 +36,8 @@ INSERT INTO pagamento (forma_pagamento, valor, data_pagamento, idVistoria)
 VALUES ('Pix', 150.00, '2025-09-01', 1);
 
 -- Inserir agendamento cancelado
-INSERT INTO agendamento (data_agendamento, hora, status_agendamento, idCliente, idVeiculo)
-VALUES ('2025-08-28', '09:00:00', 'Cancelado', 1, 1);
+INSERT INTO agendamento (data_agendamento, hora, tipo_vistoria, status_agendamento, idCliente, idVeiculo)
+VALUES ('2025-08-28', '09:00:00', 'Vistoria Cautelar', 'Cancelado', 1, 1);
 
 -- ==============================
 -- CONSULTAS DE VERIFICAÇÃO
@@ -47,3 +47,4 @@ select * from veiculo;
 select * from agendamento;
 select * from vistoria;
 select * from pagamento;
+select * from funcionario;
