@@ -25,3 +25,6 @@ ConexaoSQL.java
 lib/
 libs/
 *.jar
+
+# Pasta de bibliotecas externas
+"/Bibliotecas Externas/"
