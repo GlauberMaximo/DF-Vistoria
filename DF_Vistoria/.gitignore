@@ -20,11 +20,3 @@
 
 # Arquivo sensível (credenciais)
 ConexaoSQL.java
-
-# Bibliotecas externas (JARs)
-lib/
-libs/
-*.jar
-
-# Pasta de bibliotecas externas
-"/Bibliotecas Externas/"
