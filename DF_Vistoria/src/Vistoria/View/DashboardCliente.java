@@ -85,6 +85,7 @@ public class DashboardCliente extends JFrame {
         panelLaudo.add(new JLabel("Tela Emitir Laudo", SwingConstants.CENTER));
         
         // Instancia os outros painéis uma única vez
+        panelDashboard = new Dashboard(clienteLogado);
         panelAgendar = new PanelAgendarVistoria(clienteLogado);
         panelCadastrar = new PanelCadastrarVeiculo(clienteLogado);
 
