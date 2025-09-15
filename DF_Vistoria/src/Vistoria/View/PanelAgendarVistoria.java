@@ -31,11 +31,16 @@ public class PanelAgendarVistoria extends JPanel {
     private AgendamentoController agendamentoController;
     private VeiculoController veiculoController;
     private Cliente clienteLogado;
+    
+    // Referência para o Dashboard
+    private final Dashboard dashboardPanel;
 
-    public PanelAgendarVistoria(Cliente cliente) {
+    // Construtor agora recebe a referência do Dashboard
+    public PanelAgendarVistoria(Cliente cliente, Dashboard dashboard) {
         this.clienteLogado = cliente;
         this.agendamentoController = new AgendamentoController();
         this.veiculoController = new VeiculoController();
+        this.dashboardPanel = dashboard; // Armazena a referência
 
         setBackground(Color.WHITE);
 
@@ -177,5 +182,10 @@ public class PanelAgendarVistoria extends JPanel {
 
         agendamentoController.adicionarAgendamento(novoAgendamento);
         JOptionPane.showMessageDialog(this, "Agendamento realizado com sucesso!");
+        
+        // Chamada para atualizar o dashboard
+        if (dashboardPanel != null) {
+            dashboardPanel.refreshDados();
+        }
     }
 }

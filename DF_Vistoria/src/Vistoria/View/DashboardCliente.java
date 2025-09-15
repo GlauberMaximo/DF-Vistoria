@@ -17,7 +17,8 @@ public class DashboardCliente extends JFrame {
     // Novas referências para os painéis
     private PanelAgendarVistoria panelAgendar;
     private PanelCadastrarVeiculo panelCadastrar;
-    private JPanel panelDashboard, panelLaudo;
+    private Dashboard panelDashboard; // Use o nome da classe Dashboard diretamente
+    private JPanel panelLaudo;
 
     // Construtor atualizado para receber o objeto Cliente
     public DashboardCliente(Cliente cliente) {
@@ -36,6 +37,7 @@ public class DashboardCliente extends JFrame {
                     JOptionPane.YES_NO_OPTION);
                 if (opcao == JOptionPane.YES_OPTION) {
                     dispose();
+                    // Assumindo que a classe Login existe no mesmo pacote ou é importada
                     new Login().setVisible(true);
                 }
             }
@@ -77,17 +79,21 @@ public class DashboardCliente extends JFrame {
 
         // ================== PAINEL CENTRAL ==================
         
-        // CORREÇÃO: Cria um JPanel para cada JLabel
-        panelDashboard = new JPanel();
-        panelDashboard.add(new JLabel("Tela Dashboard do Cliente", SwingConstants.CENTER));
-        
-        panelLaudo = new JPanel();
-        panelLaudo.add(new JLabel("Tela Emitir Laudo", SwingConstants.CENTER));
-        
-        // Instancia os outros painéis uma única vez
+        // 🔹 CORREÇÃO: Instancia os painéis na ordem correta
         panelDashboard = new Dashboard(clienteLogado);
-        panelAgendar = new PanelAgendarVistoria(clienteLogado);
-        panelCadastrar = new PanelCadastrarVeiculo(clienteLogado);
+        
+        // 🔹 Passa a referência do Dashboard para o construtor do PanelAgendarVistoria
+        panelAgendar = new PanelAgendarVistoria(clienteLogado, panelDashboard);
+        
+        // 🔹 Passa as referências do Dashboard e do PanelAgendarVistoria
+        panelCadastrar = new PanelCadastrarVeiculo(clienteLogado, panelDashboard, panelAgendar);
+
+        // Criação do painel de laudo (pode ser ajustado futuramente)
+        panelLaudo = new JPanel(new BorderLayout());
+        JLabel lblLaudo = new JLabel("Em breve: listagem de laudos...", SwingConstants.CENTER);
+        lblLaudo.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+        lblLaudo.setForeground(new Color(128, 128, 128));
+        panelLaudo.add(lblLaudo, BorderLayout.CENTER);
 
         // Adiciona os painéis ao CardLayout
         panelCenter = new JPanel(new CardLayout());

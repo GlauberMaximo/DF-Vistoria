@@ -20,10 +20,17 @@ public class PanelCadastrarVeiculo extends JPanel {
     private JButton btnSalvar;
     private final VeiculoController veiculoController;
     private final Cliente clienteLogado;
+    
+    // Novas referências para os painéis que precisam ser atualizados
+    private final Dashboard dashboardPanel;
+    private final PanelAgendarVistoria agendamentoPanel;
 
-    public PanelCadastrarVeiculo(Cliente cliente) {
+    // Construtor agora recebe os painéis como parâmetros
+    public PanelCadastrarVeiculo(Cliente cliente, Dashboard dashboard, PanelAgendarVistoria agendamento) {
         this.clienteLogado = cliente;
         this.veiculoController = new VeiculoController();
+        this.dashboardPanel = dashboard;
+        this.agendamentoPanel = agendamento;
 
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(30, 60, 30, 60));
@@ -226,6 +233,14 @@ public class PanelCadastrarVeiculo extends JPanel {
 
             JOptionPane.showMessageDialog(this, "Veículo cadastrado com sucesso!");
             limparCampos();
+
+            // Chamada dos métodos de atualização
+            if (agendamentoPanel != null) {
+                agendamentoPanel.refreshVeiculosList();
+            }
+            if (dashboardPanel != null) {
+                dashboardPanel.refreshDados();
+            }
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "O ano deve ser um número válido.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);

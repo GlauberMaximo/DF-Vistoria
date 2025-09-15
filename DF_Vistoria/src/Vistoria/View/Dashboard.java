@@ -66,6 +66,11 @@ public class Dashboard extends JPanel {
         carregarDados();
     }
 
+    // Método público para recarregar todos os dados do dashboard
+    public void refreshDados() {
+        carregarDados();
+    }
+
     private JPanel criarCard(String titulo, String iconPath, Color corTitulo) {
         JPanel card = new JPanel(new BorderLayout(10, 10));
         card.setOpaque(true);
