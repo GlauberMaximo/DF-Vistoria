@@ -30,21 +30,44 @@ Este projeto requer a criação de uma estrutura específica para a persistênci
    Exemplo básico de implementação em Java:
 
    ```java
-   package Conexao;
+package Vistoria.Conexao;
 
-   import java.sql.Connection;
-   import java.sql.DriverManager;
-   import java.sql.SQLException;
+import java.sql.Connection; 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-   public class ConexaoSQL {
-       private static final String URL = "jdbc:mysql://localhost:3306/seu_banco";
-       private static final String USER = "seu_usuario";
-       private static final String PASSWORD = "sua_senha";
+public class ConexaoSQL {
+	
+	private static final String URL = "";
+    private static final String USER = ""; 
+    private static final String PASSWORD = "";
 
-       public static Connection getConnection() throws SQLException {
-           return DriverManager.getConnection(URL, USER, PASSWORD);
-       }
-   }
+    public static Connection getConnection() {
+        try {
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            return conn;
+        } catch (SQLException e) {
+            System.out.println("Erro ao conectar: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Método de teste da conexão
+    public static void main(String[] args) {
+        Connection conn = getConnection();
+        if (conn != null) {
+            System.out.println("Conexão realizada com sucesso!");
+            try {
+                conn.close();
+                System.out.println("Conexão encerrada.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}
+
    ```
 
    > **Observação:** Substitua `"seu_banco"`, `"seu_usuario"` e `"sua_senha"` pelos dados do seu ambiente.
