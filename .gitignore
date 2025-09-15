@@ -22,8 +22,6 @@
 ConexaoSQL.java
 
 # Bibliotecas externas (JARs)
-lib/
-libs/
 *.jargit rm --cached -r *.jar
 
 # Pasta de bibliotecas externas
