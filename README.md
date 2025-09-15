@@ -1,58 +1,56 @@
-# Instruções de Estrutura de Pastas para Persistência com MySQL JDBC
+# Estrutura de Pastas e Persistência com MySQL (JDBC)
 
-Este projeto requer a criação de uma estrutura específica para a persistência de dados utilizando o MySQL via JDBC. Siga atentamente as instruções abaixo para que o projeto funcione corretamente.
+Este projeto utiliza **JDBC** para realizar a persistência de dados no
+banco de dados **MySQL**.\
+Abaixo estão as instruções para configuração da estrutura de pastas e
+implementação da conexão.
 
-## Passos para Configuração
+------------------------------------------------------------------------
 
-1. **Criar a Pasta `Conexao`**
-   
-   No diretório raiz do seu projeto, crie uma pasta chamada `Conexao`. Essa pasta será responsável por armazenar todos os arquivos relacionados à conexão com o banco de dados.
+## 📂 Estrutura de Pastas
 
-   ```
-   /SeuProjeto
-     └── Conexao
-   ```
+No diretório raiz do seu projeto, crie a seguinte estrutura:
 
-2. **Criar o Arquivo `ConexaoSQL`**
-
-   Dentro da pasta `Conexao`, crie um arquivo chamado `ConexaoSQL` (por exemplo, `ConexaoSQL.java` se estiver usando Java). Este arquivo será responsável por implementar a lógica de conexão e persistência no banco de dados MySQL utilizando JDBC.
-
-   ```
-   /SeuProjeto
+    /SeuProjeto
      └── Conexao
          └── ConexaoSQL.java
-   ```
 
-3. **Implementação da Conexão JDBC**
+-   A pasta **`Conexao`** é responsável por armazenar as classes
+    relacionadas à conexão com o banco de dados.
+-   O arquivo **`ConexaoSQL.java`** implementa a lógica de conexão via
+    JDBC.
 
-   No arquivo `ConexaoSQL`, implemente a conexão com o banco de dados MySQL utilizando JDBC. Certifique-se de incluir as dependências do driver JDBC do MySQL no seu projeto.
+------------------------------------------------------------------------
 
-   Exemplo básico de implementação em Java:
+## ⚙️ Configuração da Conexão JDBC
 
-   ```java
+No arquivo `ConexaoSQL.java`, implemente a conexão com o banco MySQL.\
+Exemplo em **Java**:
+
+``` java
 package Vistoria.Conexao;
 
-import java.sql.Connection; 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexaoSQL {
-	
-	private static final String URL = "";
-    private static final String USER = ""; 
-    private static final String PASSWORD = "";
+
+    // Substitua pelos dados do seu ambiente
+    private static final String URL = "jdbc:mysql://localhost:3306/seu_banco";
+    private static final String USER = "seu_usuario";
+    private static final String PASSWORD = "sua_senha";
 
     public static Connection getConnection() {
         try {
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            return conn;
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             System.out.println("Erro ao conectar: " + e.getMessage());
             return null;
         }
     }
 
-    // Método de teste da conexão
+    // Método de teste
     public static void main(String[] args) {
         Connection conn = getConnection();
         if (conn != null) {
@@ -65,13 +63,51 @@ public class ConexaoSQL {
             }
         }
     }
-
 }
+```
 
-   ```
+------------------------------------------------------------------------
 
-   > **Observação:** Substitua `"seu_banco"`, `"seu_usuario"` e `"sua_senha"` pelos dados do seu ambiente.
+## 📦 Dependências
 
----
+Certifique-se de adicionar o **Driver JDBC do MySQL** ao seu projeto:
 
-Com esses passos, sua aplicação estará pronta para realizar a persistência de dados no MySQL utilizando JDBC. Qualquer dúvida, consulte a documentação do JDBC ou abra uma issue neste repositório.
+-   **Maven**:
+
+    ``` xml
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
+    </dependency>
+    ```
+
+-   **.jar manual**:\
+    Baixe o `mysql-connector-java` e adicione ao **classpath** do
+    projeto.
+
+------------------------------------------------------------------------
+
+## 🚀 Testando a Conexão
+
+1.  Configure a `URL`, `USER` e `PASSWORD` no `ConexaoSQL.java`.
+
+2.  Execute o método `main` dentro da classe.
+
+3.  Verifique no console:
+
+        Conexão realizada com sucesso!
+        Conexão encerrada.
+
+------------------------------------------------------------------------
+
+## 📚 Referências
+
+-   [Documentação Oficial
+    JDBC](https://docs.oracle.com/javase/tutorial/jdbc/)\
+-   [MySQL Connector/J](https://dev.mysql.com/downloads/connector/j/)
+
+------------------------------------------------------------------------
+
+✅ Agora sua aplicação está pronta para realizar persistência de dados
+com MySQL via JDBC.
