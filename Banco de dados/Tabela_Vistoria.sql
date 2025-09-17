@@ -1,4 +1,4 @@
--- drop database if exists sistema_vistoria_df;
+drop database if exists sistema_vistoria_df;
 create database sistema_vistoria_df;
 use sistema_vistoria_df;
 
@@ -79,14 +79,16 @@ create table vistoria (
 -- PAGAMENTO
 -- =========================
 -- O pagamento está diretamente ligado à vistoria, que é o serviço.
-create table pagamento (
-    idPagamento int primary key auto_increment,
-    forma_pagamento enum("Débito","Crédito","Pix","Boleto","Dinheiro") not null,
-    valor decimal(10,2) not null,
-    data_pagamento date not null,
-    idVistoria int not null unique,
-    constraint fk_pagamento_vistoria foreign key (idVistoria) references vistoria(idVistoria)
+CREATE TABLE pagamento (
+    idPagamento INT PRIMARY KEY AUTO_INCREMENT,
+    forma_pagamento ENUM("DEBITO","CREDITO","PIX","BOLETO","DINHEIRO") NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    data_pagamento DATE NOT NULL,
+    idVistoria INT NOT NULL UNIQUE,
+    CONSTRAINT fk_pagamento_vistoria FOREIGN KEY (idVistoria) REFERENCES vistoria(idVistoria)
 );
+
+
 -- =========================
 -- Laudo Vistoria
 -- =========================

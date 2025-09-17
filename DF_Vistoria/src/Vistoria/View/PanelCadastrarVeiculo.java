@@ -14,8 +14,8 @@ import java.time.Year;
 public class PanelCadastrarVeiculo extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private JFormattedTextField txtPlaca, txtAno;
-    private JTextField txtTipo, txtNome, txtModelo, txtChassi;
+    private JTextField txtPlaca, txtTipo, txtNome, txtModelo, txtChassi;
+    private JFormattedTextField txtAno;
     private JTextArea txtObservacoes;
     private JButton btnSalvar;
     private final VeiculoController veiculoController;
@@ -75,15 +75,10 @@ public class PanelCadastrarVeiculo extends JPanel {
         }
 
         // Campos
-        try {
-            MaskFormatter placaMask = new MaskFormatter("UUU-####");
-            placaMask.setPlaceholderCharacter('_');
-            txtPlaca = new JFormattedTextField(placaMask);
-        } catch (ParseException e) {
-            txtPlaca = new JFormattedTextField();
-        }
+        txtPlaca = new JTextField();
         txtPlaca.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtPlaca.setColumns(10);
+        txtPlaca.setToolTipText("Ex: ABC-1234 (padrão antigo) ou ABC1D23 (padrão Mercosul)");
 
         txtTipo = new JTextField();
         txtTipo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -193,14 +188,19 @@ public class PanelCadastrarVeiculo extends JPanel {
             String chassi = txtChassi.getText().trim();
             String obs = txtObservacoes.getText().trim();
 
-            if (placa.contains("_") || placa.isEmpty() || tipo.isEmpty() || nome.isEmpty() || modelo.isEmpty() || anoStr.contains("_") || anoStr.isEmpty() || chassi.isEmpty()) {
+            if (placa.isEmpty() || tipo.isEmpty() || nome.isEmpty() || modelo.isEmpty() || anoStr.contains("_") || anoStr.isEmpty() || chassi.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios e devem estar completos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (!placa.matches("[A-Z]{3}-?\\d[A-Z]\\d{2}|[A-Z]{3}-?\\d{4}")) {
-                JOptionPane.showMessageDialog(this, "Placa inválida. Use 'ABC-1234' ou 'ABC-1D23'.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            placa = placa.replace("-", "");
+            if (!placa.matches("[A-Z]{3}\\d[A-Z]\\d{2}|[A-Z]{3}\\d{4}")) {
+                JOptionPane.showMessageDialog(this, "Placa inválida. Use o padrão 'ABC1D23' (Mercosul) ou 'ABC1234'.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+            
+            if (placa.matches("[A-Z]{3}\\d{4}")) {
+                placa = placa.substring(0, 3) + "-" + placa.substring(3);
             }
 
             if (chassi.length() != 17) {
@@ -234,7 +234,6 @@ public class PanelCadastrarVeiculo extends JPanel {
             JOptionPane.showMessageDialog(this, "Veículo cadastrado com sucesso!");
             limparCampos();
 
-            // Chamada dos métodos de atualização
             if (agendamentoPanel != null) {
                 agendamentoPanel.refreshVeiculosList();
             }
@@ -251,7 +250,7 @@ public class PanelCadastrarVeiculo extends JPanel {
     }
 
     private void limparCampos() {
-        txtPlaca.setValue(null);
+        txtPlaca.setText("");
         txtTipo.setText("");
         txtNome.setText("");
         txtModelo.setText("");
