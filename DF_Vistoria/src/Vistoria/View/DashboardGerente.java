@@ -17,10 +17,10 @@ public class DashboardGerente extends JFrame {
     private Funcionario funcionarioLogado;
 
     // Painéis centrais
+    private JTabbedPane panelRelatorios;
+    private JPanel panelFinancas;
     private JPanel panelCadastrarFuncionario;
     private JPanel panelListarFuncionario;
-    private JPanel panelRelatorios;
-    private JPanel panelFinancas;
 
     public DashboardGerente(Funcionario funcionario) {
         this.funcionarioLogado = funcionario;
@@ -45,8 +45,8 @@ public class DashboardGerente extends JFrame {
         });
 
         // ================== CONTENT PANE ==================
-        contentPane = new JPanel(new BorderLayout(0,0));
-        contentPane.setBorder(new EmptyBorder(0,0,0,0));
+        contentPane = new JPanel(new BorderLayout(0, 0));
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
         // ================= MENU LATERAL ==================
@@ -83,17 +83,16 @@ public class DashboardGerente extends JFrame {
         panelLeft.add(btnSair);
 
         // ================== PAINEL CENTRAL ==================
-        panelRelatorios = new JPanel(new BorderLayout());
-        panelRelatorios.add(new JLabel("Relatórios - Em breve", SwingConstants.CENTER), BorderLayout.CENTER);
+        panelRelatorios = new JTabbedPane();
+        panelRelatorios.addTab("Agendamentos", new PanelRelatorio());
+        panelRelatorios.addTab("Desligamentos", new PanelRelatorioDesligamentos());
 
         panelFinancas = new JPanel(new BorderLayout());
-        panelFinancas.add(new JLabel("Finanças - Em breve", SwingConstants.CENTER), BorderLayout.CENTER);
+        panelFinancas.add(new JLabel("💰 Relatórios financeiros em construção...",
+                SwingConstants.CENTER), BorderLayout.CENTER);
 
-        panelCadastrarFuncionario = new JPanel(new BorderLayout());
-        panelCadastrarFuncionario.add(new JLabel("Cadastrar Funcionário - Em breve", SwingConstants.CENTER), BorderLayout.CENTER);
-
-        panelListarFuncionario = new JPanel(new BorderLayout());
-        panelListarFuncionario.add(new JLabel("Listar Funcionários - Em breve", SwingConstants.CENTER), BorderLayout.CENTER);
+        panelCadastrarFuncionario = new PanelCadastrarFuncionario();
+        panelListarFuncionario = new PanelListarFuncionario();
 
         panelCenter = new JPanel(new CardLayout());
         panelCenter.add(panelRelatorios, "Relatorios");
@@ -145,10 +144,10 @@ public class DashboardGerente extends JFrame {
         cl.show(panelCenter, nomeTela);
     }
 
-    // Getter para painéis se necessário futuramente
+    // Getters para painéis
+    public JTabbedPane getPanelRelatorios() { return panelRelatorios; }
+    public JPanel getPanelFinancas() { return panelFinancas; }
     public JPanel getPanelCadastrarFuncionario() { return panelCadastrarFuncionario; }
     public JPanel getPanelListarFuncionario() { return panelListarFuncionario; }
-    public JPanel getPanelRelatorios() { return panelRelatorios; }
-    public JPanel getPanelFinancas() { return panelFinancas; }
 
 }

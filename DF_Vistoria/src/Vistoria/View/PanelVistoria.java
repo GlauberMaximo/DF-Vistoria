@@ -2,11 +2,14 @@ package Vistoria.View;
 
 import Vistoria.Controller.AgendamentoController;
 import Vistoria.Controller.ClienteController;
+import Vistoria.Controller.PagamentoController;
 import Vistoria.Controller.VeiculoController;
 import Vistoria.Controller.VistoriaController;
 import Vistoria.Model.Agendamento;
 import Vistoria.Model.Cliente;
+import Vistoria.Model.FormaPagamento;
 import Vistoria.Model.Funcionario;
+import Vistoria.Model.Pagamento;
 import Vistoria.Model.ResultadoVistoria;
 import Vistoria.Model.Veiculo;
 import Vistoria.Model.Vistoria;
@@ -18,8 +21,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class PanelVistoria extends JPanel {
 
@@ -29,12 +35,14 @@ public class PanelVistoria extends JPanel {
     private DefaultTableModel tableModel;
     private JTextArea txtObservacoes;
     private JComboBox<String> comboResultado;
+    private JTextField txtValor;
     private JButton btnSalvar;
 
     private AgendamentoController agendamentoController;
     private VistoriaController vistoriaController;
     private ClienteController clienteController;
     private VeiculoController veiculoController;
+    private PagamentoController pagamentoController;
 
     private Funcionario funcionarioLogado;
     private Agendamento agendamentoSelecionado;
@@ -50,6 +58,7 @@ public class PanelVistoria extends JPanel {
         vistoriaController = new VistoriaController();
         clienteController = new ClienteController();
         veiculoController = new VeiculoController();
+        pagamentoController = new PagamentoController();
 
         // ================= TABELA =================
         String[] colunas = {"ID", "Data", "Hora", "Tipo Vistoria", "Cliente", "Veículo"};
@@ -59,6 +68,7 @@ public class PanelVistoria extends JPanel {
                 return false;
             }
         };
+
         tabelaAgendamentos = new JTable(tableModel);
         tabelaAgendamentos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabelaAgendamentos.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -68,9 +78,8 @@ public class PanelVistoria extends JPanel {
         tabelaAgendamentos.setShowGrid(false);
         tabelaAgendamentos.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (isSelected) {
                     c.setBackground(new Color(140, 204, 251));
@@ -88,41 +97,63 @@ public class PanelVistoria extends JPanel {
         header.setBackground(new Color(140, 204, 251));
         header.setForeground(Color.BLACK);
         header.setReorderingAllowed(false);
+        
+        // Ajusta a largura das colunas
+        tabelaAgendamentos.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tabelaAgendamentos.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaAgendamentos.getColumnModel().getColumn(2).setPreferredWidth(60);
+        tabelaAgendamentos.getColumnModel().getColumn(3).setPreferredWidth(120);
+        tabelaAgendamentos.getColumnModel().getColumn(4).setPreferredWidth(180);
+        tabelaAgendamentos.getColumnModel().getColumn(5).setPreferredWidth(200);
 
         JScrollPane scrollTable = new JScrollPane(tabelaAgendamentos);
         add(scrollTable, BorderLayout.NORTH);
 
         // ================= FORMULÁRIO =================
-        JPanel panelForm = new JPanel();
-        panelForm.setLayout(new BoxLayout(panelForm, BoxLayout.Y_AXIS));
+        JPanel panelForm = new JPanel(new BorderLayout(10, 10));
         panelForm.setBorder(new EmptyBorder(10, 0, 10, 0));
         panelForm.setBackground(Color.WHITE);
 
+        // Painel para a área de Observações (título e JTextArea)
+        JPanel panelObs = new JPanel(new BorderLayout(0, 5));
+        panelObs.setBackground(Color.WHITE);
+        
         JLabel lblObservacoes = new JLabel("Observações da Vistoria:");
         lblObservacoes.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblObservacoes.setAlignmentX(LEFT_ALIGNMENT);
+        panelObs.add(lblObservacoes, BorderLayout.PAGE_START);
 
-        txtObservacoes = new JTextArea(5, 50);
+        txtObservacoes = new JTextArea(8, 50);
         txtObservacoes.setLineWrap(true);
         txtObservacoes.setWrapStyleWord(true);
         txtObservacoes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         JScrollPane scrollObs = new JScrollPane(txtObservacoes);
-        scrollObs.setAlignmentX(LEFT_ALIGNMENT);
+        panelObs.add(scrollObs, BorderLayout.CENTER);
+
+        // Painel para os controles de Resultado e Valor
+        JPanel panelControles = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        panelControles.setBackground(Color.WHITE);
 
         JLabel lblResultado = new JLabel("Resultado da Vistoria:");
         lblResultado.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblResultado.setBorder(new EmptyBorder(10, 0, 5, 0));
-        lblResultado.setAlignmentX(LEFT_ALIGNMENT);
+        panelControles.add(lblResultado);
 
         comboResultado = new JComboBox<>(new String[]{"Aprovado", "Reprovado", "Aprovado com ressalvas"});
         comboResultado.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        comboResultado.setMaximumSize(new Dimension(300, 30));
-        comboResultado.setAlignmentX(LEFT_ALIGNMENT);
+        comboResultado.setPreferredSize(new Dimension(180, 30));
+        panelControles.add(comboResultado);
+        
+        JLabel lblValor = new JLabel("Valor:");
+        lblValor.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        panelControles.add(lblValor);
 
-        panelForm.add(lblObservacoes);
-        panelForm.add(scrollObs);
-        panelForm.add(lblResultado);
-        panelForm.add(comboResultado);
+        txtValor = new JTextField();
+        txtValor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtValor.setPreferredSize(new Dimension(120, 30));
+        panelControles.add(txtValor);
+
+        // Adiciona os painéis ao painel de formulário principal
+        panelForm.add(panelObs, BorderLayout.CENTER);
+        panelForm.add(panelControles, BorderLayout.PAGE_END);
 
         add(panelForm, BorderLayout.CENTER);
 
@@ -132,7 +163,7 @@ public class PanelVistoria extends JPanel {
         btnSalvar.setBackground(new Color(0, 123, 255));
         btnSalvar.setForeground(Color.WHITE);
         btnSalvar.setFocusPainted(false);
-        btnSalvar.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        btnSalvar.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         btnSalvar.addActionListener(e -> salvarVistoria());
 
         JPanel panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -157,19 +188,11 @@ public class PanelVistoria extends JPanel {
             if ("Pendente".equalsIgnoreCase(a.getStatus_agendamento())) {
                 Cliente cliente = clienteController.buscarClientePorId(a.getIdCliente());
                 Veiculo veiculo = veiculoController.buscarPorId(a.getIdVeiculo());
-
-                String veiculoNomePlaca = veiculo != null
-                        ? veiculo.getNome_veiculo() + " (" + veiculo.getPlaca() + ")"
+                String veiculoNomePlaca = veiculo != null ? veiculo.getNome_veiculo() + " (" + veiculo.getPlaca() + ")"
                         : "Desconhecido";
 
-                tableModel.addRow(new Object[]{
-                        a.getIdAgendamento(),
-                        a.getData_agendamento(),
-                        a.getHora(),
-                        a.getTipo_vistoria(),
-                        cliente != null ? cliente.getNome() : "Desconhecido",
-                        veiculoNomePlaca
-                });
+                tableModel.addRow(new Object[]{a.getIdAgendamento(), a.getData_agendamento(), a.getHora(),
+                        a.getTipo_vistoria(), cliente != null ? cliente.getNome() : "Desconhecido", veiculoNomePlaca});
             }
         }
     }
@@ -183,6 +206,7 @@ public class PanelVistoria extends JPanel {
             if (agendamentoSelecionado != null) {
                 txtObservacoes.setText("");
                 comboResultado.setSelectedIndex(0);
+                txtValor.setText("");
             }
         }
     }
@@ -195,29 +219,41 @@ public class PanelVistoria extends JPanel {
 
         String observacoes = txtObservacoes.getText().trim();
         if (observacoes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite as observações da vistoria.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Digite as observações da vistoria.", "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        BigDecimal valor;
+        try {
+            valor = new BigDecimal(txtValor.getText().replace(",", "."));
+            if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+                JOptionPane.showMessageDialog(this, "Digite um valor válido para a vistoria.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "O valor deve ser um número.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String resultadoStr = (String) comboResultado.getSelectedItem();
         ResultadoVistoria resultadoEnum = ResultadoVistoria.valueOf(resultadoStr.toUpperCase().replace(" ", "_"));
 
-        Vistoria vistoria = new Vistoria(
-                LocalDate.now(),
-                resultadoEnum,
-                observacoes,
-                agendamentoSelecionado.getIdAgendamento(),
-                funcionarioLogado.getIdFuncionario()
-        );
-
+        Vistoria vistoria = new Vistoria(LocalDate.now(), resultadoEnum, observacoes,
+                agendamentoSelecionado.getIdAgendamento(), funcionarioLogado.getIdFuncionario());
         vistoriaController.criarVistoria(vistoria);
+
+        Pagamento pagamento = new Pagamento(FormaPagamento.DINHEIRO, valor, LocalDate.now(), vistoria.getIdVistoria());
+        pagamentoController.criarPagamento(pagamento);
 
         agendamentoSelecionado.setStatus_agendamento("Concluido");
         agendamentoController.atualizarAgendamento(agendamentoSelecionado);
 
-        JOptionPane.showMessageDialog(this, "Vistoria salva com sucesso!");
+        JOptionPane.showMessageDialog(this, "Vistoria e pagamento salvos com sucesso!");
         txtObservacoes.setText("");
         comboResultado.setSelectedIndex(0);
+        txtValor.setText("");
         carregarAgendamentosPendentes();
     }
 }

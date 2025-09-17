@@ -12,7 +12,7 @@ create table cliente (
     telefone varchar(16) not null,
     email varchar(100) not null unique,
     senha varchar(100) not null
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- FUNCIONARIO
@@ -23,8 +23,8 @@ create table funcionario (
     email varchar(100) not null unique,
     matricula varchar(100) not null unique,
     senha varchar(100) not null,
-    cargo enum("Vistoriador","Gerente") not null
-);
+    cargo enum('Vistoriador','Gerente') not null
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- VEICULO
@@ -40,63 +40,68 @@ create table veiculo (
     observacoes text,
     idCliente int not null,
     constraint fk_veiculo_cliente foreign key(idCliente) references cliente(idCliente)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- AGENDAMENTO
 -- =========================
--- O status será `Pendente`, `Concluido` ou `Cancelado`.
--- O idCliente é redundante se já temos o idVeiculo, mas mantemos para facilitar consultas.
 create table agendamento (
     idAgendamento int primary key auto_increment,
     data_agendamento date not null,
     hora time not null,
-    tipo_vistoria enum("Vistoria de Transferência", "Vistoria Cautelar", "Vistoria Prévia")not null,
-    status_agendamento enum("Pendente","Concluido","Cancelado") default "Pendente" not null,
+    tipo_vistoria enum('Vistoria de Transferência', 'Vistoria Cautelar', 'Vistoria Prévia') not null,
+    status_agendamento enum('Pendente','Concluido','Cancelado') default 'Pendente' not null,
     idCliente int not null,
     idVeiculo int not null,
     constraint fk_agendamento_cliente foreign key(idCliente) references cliente(idCliente),
     constraint fk_agendamento_veiculo foreign key(idVeiculo) references veiculo(idVeiculo)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- VISTORIA
 -- =========================
--- A vistoria é o resultado de um agendamento.
--- Removido o campo status_pagamento para evitar redundância.
 create table vistoria (
     idVistoria int primary key auto_increment,
     data_vistoria date not null,
-    resultado enum("Aprovado","Reprovado","Aprovado com ressalvas") not null,
+    resultado enum('Aprovado','Reprovado','Aprovado com ressalvas') not null,
     observacoes text,
     idAgendamento int not null unique,
     idFuncionario int not null,
     constraint fk_vistoria_agendamento foreign key(idAgendamento) references agendamento(idAgendamento),
     constraint fk_vistoria_funcionario foreign key(idFuncionario) references funcionario(idFuncionario)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- PAGAMENTO
 -- =========================
--- O pagamento está diretamente ligado à vistoria, que é o serviço.
 CREATE TABLE pagamento (
     idPagamento INT PRIMARY KEY AUTO_INCREMENT,
-    forma_pagamento ENUM("DEBITO","CREDITO","PIX","BOLETO","DINHEIRO") NOT NULL,
+    forma_pagamento ENUM('DEBITO','CREDITO','PIX','BOLETO','DINHEIRO') NOT NULL,
     valor DECIMAL(10,2) NOT NULL,
     data_pagamento DATE NOT NULL,
     idVistoria INT NOT NULL UNIQUE,
     CONSTRAINT fk_pagamento_vistoria FOREIGN KEY (idVistoria) REFERENCES vistoria(idVistoria)
-);
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =========================
 -- Laudo Vistoria
 -- =========================
--- aqui vai ficar os dados da vistoria e valor para o pagamento que serão gerados em pdf
 create table laudo(
-	idLaudo int primary key auto_increment,
+    idLaudo int primary key auto_increment,
     caminho_arquivo varchar(255),
     data_geracao datetime not null,
     idVistoria int not null unique,
     constraint fk_laudo_vistoria foreign key(idVistoria) references vistoria(idVistoria)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =========================
+-- Desligamento (histórico)
+-- =========================
+CREATE TABLE desligamento_funcionario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_funcionario INT NOT NULL,
+    nome_funcionario VARCHAR(150) NOT NULL,
+    motivo VARCHAR(255) NOT NULL,
+    data_desligamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_desligamento_funcionario FOREIGN KEY (id_funcionario) REFERENCES funcionario(idFuncionario) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
