@@ -171,7 +171,7 @@ public class Login extends JFrame {
 					new DashboardVistoria(funcionario).setVisible(true);
 					break;
 				case "Gerente":
-					new DashboardGerente().setVisible(true);
+					new DashboardGerente(funcionario).setVisible(true);
 					break;
 				default:
 					JOptionPane.showMessageDialog(this, "Cargo de funcionário não reconhecido.", "Erro",
