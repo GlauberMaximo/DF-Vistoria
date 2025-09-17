@@ -6,18 +6,26 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import Vistoria.Model.Funcionario;
+
 public class DashboardVistoria extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JPanel panelCenter;
 
-    // Painéis do CardLayout
-    private JPanel panelDashboard;
-    private JPanel panelVistoria;
-    private JPanel panelRelatorios;
+    private PanelDashboard panelDashboard;
+    private PanelVistoria panelVistoria;
+    private PanelRelatorio panelRelatorios;
 
-    public DashboardVistoria() {
+    private Funcionario funcionarioLogado; 
+
+    public DashboardVistoria(Funcionario funcionario) {
+        if (funcionario == null) {
+            throw new IllegalArgumentException("Funcionário não pode ser nulo!");
+        }
+        this.funcionarioLogado = funcionario;
+
         setTitle("Área de Vistoria - Sistema DF-Vistoria");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -55,13 +63,18 @@ public class DashboardVistoria extends JFrame {
         titulo.setForeground(Color.BLACK);
         titulo.setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        JLabel lblFuncionario = new JLabel("Usuário: " + funcionarioLogado.getNome());
+        lblFuncionario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblFuncionario.setBorder(new EmptyBorder(0, 20, 10, 20));
+
         JButton btnDashboard = criarBotaoMenu("Dashboard", "icones/dashboard.png");
         JButton btnVistoria = criarBotaoMenu("Vistoria", "icones/clipboard.png");
         JButton btnRelatorios = criarBotaoMenu("Relatórios", "icones/file.png");
         JButton btnSair = criarBotaoMenu("Sair", "icones/saida.png");
 
         panelLeft.add(titulo);
-        panelLeft.add(Box.createVerticalStrut(30));
+        panelLeft.add(lblFuncionario);
+        panelLeft.add(Box.createVerticalStrut(20));
         panelLeft.add(btnDashboard);
         panelLeft.add(btnVistoria);
         panelLeft.add(btnRelatorios);
@@ -69,20 +82,9 @@ public class DashboardVistoria extends JFrame {
         panelLeft.add(btnSair);
 
         // ================== PAINEL CENTRAL ==================
-        panelDashboard = new JPanel(new BorderLayout());
-        JLabel lblDashboard = new JLabel("Bem-vindo ao Dashboard de Vistoria", SwingConstants.CENTER);
-        lblDashboard.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        panelDashboard.add(lblDashboard, BorderLayout.CENTER);
-
-        panelVistoria = new JPanel(new BorderLayout());
-        JLabel lblVistoria = new JLabel("Gerenciamento de Vistorias", SwingConstants.CENTER);
-        lblVistoria.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        panelVistoria.add(lblVistoria, BorderLayout.CENTER);
-
-        panelRelatorios = new JPanel(new BorderLayout());
-        JLabel lblRelatorios = new JLabel("Relatórios de Vistorias", SwingConstants.CENTER);
-        lblRelatorios.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        panelRelatorios.add(lblRelatorios, BorderLayout.CENTER);
+        panelDashboard = new PanelDashboard();
+        panelVistoria = new PanelVistoria(funcionario);
+        panelRelatorios = new PanelRelatorio();
 
         panelCenter = new JPanel(new CardLayout());
         panelCenter.add(panelDashboard, "Dashboard");
@@ -103,6 +105,9 @@ public class DashboardVistoria extends JFrame {
                 new Login().setVisible(true);
             }
         });
+
+        // mostra o Dashboard inicial
+        mostrarTela("Dashboard");
     }
 
     private JButton criarBotaoMenu(String texto, String iconPath) {
@@ -130,12 +135,5 @@ public class DashboardVistoria extends JFrame {
     private void mostrarTela(String nomeTela) {
         CardLayout cl = (CardLayout) panelCenter.getLayout();
         cl.show(panelCenter, nomeTela);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            DashboardVistoria frame = new DashboardVistoria();
-            frame.setVisible(true);
-        });
     }
 }

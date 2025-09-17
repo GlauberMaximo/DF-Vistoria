@@ -168,7 +168,7 @@ public class Login extends JFrame {
 			if (cargo != null) {
 				switch (cargo) {
 				case "Vistoriador":
-					new DashboardVistoria().setVisible(true);
+					new DashboardVistoria(funcionario).setVisible(true);
 					break;
 				case "Gerente":
 					new DashboardGerente().setVisible(true);

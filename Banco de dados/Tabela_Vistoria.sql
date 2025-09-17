@@ -1,4 +1,4 @@
-drop database if exists sistema_vistoria_df;
+-- drop database if exists sistema_vistoria_df;
 create database sistema_vistoria_df;
 use sistema_vistoria_df;
 
@@ -52,7 +52,7 @@ create table agendamento (
     data_agendamento date not null,
     hora time not null,
     tipo_vistoria enum("Vistoria de Transferência", "Vistoria Cautelar", "Vistoria Prévia")not null,
-    status_agendamento enum("Pendente","Concluido","Cancelado") default "pendente" not null,
+    status_agendamento enum("Pendente","Concluido","Cancelado") default "Pendente" not null,
     idCliente int not null,
     idVeiculo int not null,
     constraint fk_agendamento_cliente foreign key(idCliente) references cliente(idCliente),

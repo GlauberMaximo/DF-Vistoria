@@ -17,7 +17,7 @@ public class DashboardCliente extends JFrame {
     // Novas referências para os painéis
     private PanelAgendarVistoria panelAgendar;
     private PanelCadastrarVeiculo panelCadastrar;
-    private Dashboard panelDashboard; // Use o nome da classe Dashboard diretamente
+    private Dashboard panelDashboard; 
     private JPanel panelLaudo;
 
     // Construtor atualizado para receber o objeto Cliente
@@ -59,6 +59,10 @@ public class DashboardCliente extends JFrame {
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titulo.setForeground(new Color(0, 0, 0));
         titulo.setBorder(new EmptyBorder(20, 20, 20, 20));
+        
+        JLabel lblCliente = new JLabel("Usuário: " + clienteLogado.getNome());
+        lblCliente.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblCliente.setBorder(new EmptyBorder(0, 20, 10, 20));
 
         // Botões de menu
         JButton btnDashboard = criarBotaoMenu("Dashboard", "icones/dashboard.png");
@@ -70,6 +74,7 @@ public class DashboardCliente extends JFrame {
         // adiciona ao painel lateral
         panelLeft.add(titulo);
         panelLeft.add(Box.createVerticalStrut(30));
+        panelLeft.add(lblCliente);
         panelLeft.add(btnDashboard);
         panelLeft.add(btnAgendar);
         panelLeft.add(btnCadastrar);
