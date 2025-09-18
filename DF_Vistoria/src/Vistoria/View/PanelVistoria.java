@@ -1,18 +1,7 @@
 package Vistoria.View;
 
-import Vistoria.Controller.AgendamentoController;
-import Vistoria.Controller.ClienteController;
-import Vistoria.Controller.PagamentoController;
-import Vistoria.Controller.VeiculoController;
-import Vistoria.Controller.VistoriaController;
-import Vistoria.Model.Agendamento;
-import Vistoria.Model.Cliente;
-import Vistoria.Model.FormaPagamento;
-import Vistoria.Model.Funcionario;
-import Vistoria.Model.Pagamento;
-import Vistoria.Model.ResultadoVistoria;
-import Vistoria.Model.Veiculo;
-import Vistoria.Model.Vistoria;
+import Vistoria.Controller.*;
+import Vistoria.Model.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -43,6 +32,7 @@ public class PanelVistoria extends JPanel {
     private ClienteController clienteController;
     private VeiculoController veiculoController;
     private PagamentoController pagamentoController;
+    private LaudoController laudoController; // CORREÇÃO: Adicionando o LaudoController
 
     private Funcionario funcionarioLogado;
     private Agendamento agendamentoSelecionado;
@@ -59,6 +49,7 @@ public class PanelVistoria extends JPanel {
         clienteController = new ClienteController();
         veiculoController = new VeiculoController();
         pagamentoController = new PagamentoController();
+        laudoController = new LaudoController(); // CORREÇÃO: Inicializando o LaudoController
 
         // ================= TABELA =================
         String[] colunas = {"ID", "Data", "Hora", "Tipo Vistoria", "Cliente", "Veículo"};
@@ -240,17 +231,22 @@ public class PanelVistoria extends JPanel {
         String resultadoStr = (String) comboResultado.getSelectedItem();
         ResultadoVistoria resultadoEnum = ResultadoVistoria.valueOf(resultadoStr.toUpperCase().replace(" ", "_"));
 
+        // Cria e salva a Vistoria
         Vistoria vistoria = new Vistoria(LocalDate.now(), resultadoEnum, observacoes,
                 agendamentoSelecionado.getIdAgendamento(), funcionarioLogado.getIdFuncionario());
         vistoriaController.criarVistoria(vistoria);
 
+        // Cria e salva o Pagamento
         Pagamento pagamento = new Pagamento(FormaPagamento.DINHEIRO, valor, LocalDate.now(), vistoria.getIdVistoria());
         pagamentoController.criarPagamento(pagamento);
+
+        // CORREÇÃO: Chamada para o método de gerar o laudo
+        laudoController.gerarLaudo("laudos/laudo_" + vistoria.getIdVistoria() + ".pdf", vistoria.getIdVistoria());
 
         agendamentoSelecionado.setStatus_agendamento("Concluido");
         agendamentoController.atualizarAgendamento(agendamentoSelecionado);
 
-        JOptionPane.showMessageDialog(this, "Vistoria e pagamento salvos com sucesso!");
+        JOptionPane.showMessageDialog(this, "Vistoria, pagamento e laudo salvos com sucesso!");
         txtObservacoes.setText("");
         comboResultado.setSelectedIndex(0);
         txtValor.setText("");
