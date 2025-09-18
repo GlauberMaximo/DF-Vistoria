@@ -18,7 +18,7 @@ public class DashboardCliente extends JFrame {
     private PanelAgendarVistoria panelAgendar;
     private PanelCadastrarVeiculo panelCadastrar;
     private Dashboard panelDashboard; 
-    private JPanel panelLaudo;
+    private PanelLaudo panelLaudo; // Referência atualizada para o PanelLaudo
 
     // Construtor atualizado para receber o objeto Cliente
     public DashboardCliente(Cliente cliente) {
@@ -93,12 +93,8 @@ public class DashboardCliente extends JFrame {
         // 🔹 Passa as referências do Dashboard e do PanelAgendarVistoria
         panelCadastrar = new PanelCadastrarVeiculo(clienteLogado, panelDashboard, panelAgendar);
 
-        // Criação do painel de laudo (pode ser ajustado futuramente)
-        panelLaudo = new JPanel(new BorderLayout());
-        JLabel lblLaudo = new JLabel("Em breve: listagem de laudos...", SwingConstants.CENTER);
-        lblLaudo.setFont(new Font("Segoe UI", Font.ITALIC, 16));
-        lblLaudo.setForeground(new Color(128, 128, 128));
-        panelLaudo.add(lblLaudo, BorderLayout.CENTER);
+        // Criação do painel de laudo
+        panelLaudo = new PanelLaudo(clienteLogado);
 
         // Adiciona os painéis ao CardLayout
         panelCenter = new JPanel(new CardLayout());
