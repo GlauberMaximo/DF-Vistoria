@@ -109,7 +109,8 @@ public class PagamentoDAO {
     // Método auxiliar para mapear ResultSet -> Pagamento
     private Pagamento mapResultSetToPagamento(ResultSet rs) throws SQLException {
         int idPagamento = rs.getInt("idPagamento");
-        FormaPagamento forma = FormaPagamento.valueOf(rs.getString("forma_pagamento"));
+        // CORREÇÃO: Converte a string do banco de dados para maiúsculas antes de usar o valueOf
+        FormaPagamento forma = FormaPagamento.valueOf(rs.getString("forma_pagamento").toUpperCase());
         BigDecimal valor = rs.getBigDecimal("valor");
         LocalDate dataPagamento = rs.getDate("data_pagamento").toLocalDate();
         int idVistoria = rs.getInt("idVistoria");
