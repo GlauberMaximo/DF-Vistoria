@@ -18,7 +18,7 @@ public class DashboardGerente extends JFrame {
 
     // Painéis centrais
     private JTabbedPane panelRelatorios;
-    private JPanel panelFinancas;
+    private JPanel panelFinancas; // Declarado
     private JPanel panelCadastrarFuncionario;
     private JPanel panelListarFuncionario;
 
@@ -87,9 +87,8 @@ public class DashboardGerente extends JFrame {
         panelRelatorios.addTab("Agendamentos", new PanelRelatorio());
         panelRelatorios.addTab("Desligamentos", new PanelRelatorioDesligamentos());
 
-        panelFinancas = new JPanel(new BorderLayout());
-        panelFinancas.add(new JLabel("💰 Relatórios financeiros em construção...",
-                SwingConstants.CENTER), BorderLayout.CENTER);
+        // CORREÇÃO: Inicializando o painel de finanças com a classe correta
+        panelFinancas = new PanelFinancas();
 
         panelCadastrarFuncionario = new PanelCadastrarFuncionario();
         panelListarFuncionario = new PanelListarFuncionario();

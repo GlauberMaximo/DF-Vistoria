@@ -1,4 +1,4 @@
-drop database if exists sistema_vistoria_df;
+-- drop database if exists sistema_vistoria_df;
 create database sistema_vistoria_df;
 use sistema_vistoria_df;
 
@@ -103,5 +103,9 @@ CREATE TABLE desligamento_funcionario (
     nome_funcionario VARCHAR(150) NOT NULL,
     motivo VARCHAR(255) NOT NULL,
     data_desligamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_desligamento_funcionario FOREIGN KEY (id_funcionario) REFERENCES funcionario(idFuncionario) ON DELETE RESTRICT
+    CONSTRAINT fk_desligamento_funcionario 
+        FOREIGN KEY (id_funcionario) 
+        REFERENCES funcionario(idFuncionario) 
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

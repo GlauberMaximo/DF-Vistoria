@@ -40,6 +40,21 @@ INSERT INTO agendamento (data_agendamento, hora, tipo_vistoria, status_agendamen
 VALUES ('2025-08-28', '09:00:00', 'Vistoria Cautelar', 'Cancelado', 1, 1);
 
 -- ==============================
+-- FUNCIONÁRIOS VISTORIADORES (10)
+-- ==============================
+INSERT INTO funcionario (nome, email, matricula, senha, cargo) VALUES
+('Carlos Andrade', 'carlos.andrade@empresa.com', 'VIS-002', 'senha123', 'Vistoriador'),
+('Fernanda Lima', 'fernanda.lima@empresa.com', 'VIS-003', 'senha123', 'Vistoriador'),
+('João Pereira', 'joao.pereira@empresa.com', 'VIS-004', 'senha123', 'Vistoriador'),
+('Mariana Souza', 'mariana.souza@empresa.com', 'VIS-005', 'senha123', 'Vistoriador'),
+('Rodrigo Alves', 'rodrigo.alves@empresa.com', 'VIS-006', 'senha123', 'Vistoriador'),
+('Patrícia Gomes', 'patricia.gomes@empresa.com', 'VIS-007', 'senha123', 'Vistoriador'),
+('Thiago Martins', 'thiago.martins@empresa.com', 'VIS-008', 'senha123', 'Vistoriador'),
+('Juliana Costa', 'juliana.costa@empresa.com', 'VIS-009', 'senha123', 'Vistoriador'),
+('Rafael Oliveira', 'rafael.oliveira@empresa.com', 'VIS-010', 'senha123', 'Vistoriador'),
+('Camila Ferreira', 'camila.ferreira@empresa.com', 'VIS-011', 'senha123', 'Vistoriador');
+
+-- ==============================
 -- CONSULTAS DE VERIFICAÇÃO
 -- ==============================
 select * from cliente;

@@ -4,6 +4,8 @@ import Vistoria.Controller.FuncionarioController;
 import Vistoria.Model.Funcionario;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,20 +25,30 @@ public class PanelCadastrarFuncionario extends JPanel {
     public PanelCadastrarFuncionario() {
         this.funcionarioController = new FuncionarioController();
 
-        setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
-        setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        setLayout(new GridBagLayout()); // Centraliza tudo
+        setBackground(new Color(245, 247, 250)); // cinza claro elegante
 
-        JLabel titulo = new JLabel("Cadastrar Funcionário (Vistoriador)", JLabel.CENTER);
+        // ===== CARD PRINCIPAL =====
+        JPanel card = new JPanel(new BorderLayout(20, 20));
+        card.setBackground(Color.WHITE);
+        card.setBorder(new LineBorder(new Color(220, 220, 220), 1, true));
+        card.setPreferredSize(new Dimension(450, 400));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(220, 220, 220), 1, true),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+
+        // ===== TÍTULO =====
+        JLabel titulo = new JLabel("Cadastrar Funcionário", JLabel.CENTER);
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        titulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        add(titulo, BorderLayout.NORTH);
+        titulo.setForeground(new Color(70, 130, 180));
+        card.add(titulo, BorderLayout.NORTH);
 
-        // Painel central com formulário
+        // ===== FORMULÁRIO =====
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel lblNome = new JLabel("Nome:");
@@ -55,44 +67,49 @@ public class PanelCadastrarFuncionario extends JPanel {
         lblSenha.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtSenha = new JPasswordField(20);
 
-        // Linha 1 - Nome
+        // Linha 1
         gbc.gridx = 0; gbc.gridy = 0;
         panelForm.add(lblNome, gbc);
         gbc.gridx = 1;
         panelForm.add(txtNome, gbc);
 
-        // Linha 2 - Matrícula
+        // Linha 2
         gbc.gridx = 0; gbc.gridy = 1;
         panelForm.add(lblMatricula, gbc);
         gbc.gridx = 1;
         panelForm.add(txtMatricula, gbc);
 
-        // Linha 3 - Email
+        // Linha 3
         gbc.gridx = 0; gbc.gridy = 2;
         panelForm.add(lblEmail, gbc);
         gbc.gridx = 1;
         panelForm.add(txtEmail, gbc);
 
-        // Linha 4 - Senha
+        // Linha 4
         gbc.gridx = 0; gbc.gridy = 3;
         panelForm.add(lblSenha, gbc);
         gbc.gridx = 1;
         panelForm.add(txtSenha, gbc);
 
-        add(panelForm, BorderLayout.CENTER);
+        card.add(panelForm, BorderLayout.CENTER);
 
-        // Botão de salvar
-        btnSalvar = new JButton("Salvar");
+        // ===== BOTÃO =====
+        btnSalvar = new JButton("Salvar Funcionário");
         btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnSalvar.setBackground(new Color(70, 130, 180));
         btnSalvar.setForeground(Color.WHITE);
         btnSalvar.setFocusPainted(false);
         btnSalvar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnSalvar.setPreferredSize(new Dimension(200, 40));
+        btnSalvar.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
 
         JPanel panelButton = new JPanel();
         panelButton.setBackground(Color.WHITE);
         panelButton.add(btnSalvar);
-        add(panelButton, BorderLayout.SOUTH);
+        card.add(panelButton, BorderLayout.SOUTH);
+
+        // Adiciona o card no centro
+        add(card, new GridBagConstraints());
 
         // Evento do botão
         btnSalvar.addActionListener(new ActionListener() {
@@ -115,7 +132,6 @@ public class PanelCadastrarFuncionario extends JPanel {
             return;
         }
 
-        // Cargo fixo "Vistoriador"
         Funcionario funcionario = new Funcionario();
         funcionario.setNome(nome);
         funcionario.setMatricula(matricula);
@@ -128,7 +144,6 @@ public class PanelCadastrarFuncionario extends JPanel {
         JOptionPane.showMessageDialog(this, "Funcionário cadastrado com sucesso!",
                 "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-        // limpa os campos
         txtNome.setText("");
         txtMatricula.setText("");
         txtEmail.setText("");
