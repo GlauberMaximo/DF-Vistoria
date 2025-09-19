@@ -1,10 +1,14 @@
 package Vistoria.View;
 
 import Vistoria.Controller.AgendamentoController;
+import Vistoria.Controller.LaudoController;
+import Vistoria.Controller.VistoriaController;
 import Vistoria.Controller.VeiculoController;
 import Vistoria.Model.Agendamento;
 import Vistoria.Model.Cliente;
+import Vistoria.Model.Laudo;
 import Vistoria.Model.Veiculo;
+import Vistoria.Model.Vistoria;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,16 +22,21 @@ public class Dashboard extends JPanel {
 
     private VeiculoController veiculoController;
     private AgendamentoController agendamentoController;
+    private LaudoController laudoController; // NOVO: Adicionando o LaudoController
+    private VistoriaController vistoriaController; // NOVO: Adicionando o VistoriaController
     private Cliente clienteLogado;
 
     private DefaultListModel<String> veiculosModel;
     private DefaultListModel<String> agendamentosModel;
+    private DefaultListModel<String> laudosModel; // NOVO: Modelo para a lista de laudos
 
     public Dashboard(Cliente cliente) {
         this.clienteLogado = cliente;
 
         veiculoController = new VeiculoController();
         agendamentoController = new AgendamentoController();
+        laudoController = new LaudoController(); // NOVO: Inicializando o LaudoController
+        vistoriaController = new VistoriaController(); // NOVO: Inicializando o VistoriaController
 
         setLayout(new GridLayout(1, 3, 20, 20));
         setBackground(Color.decode("#F5F6FA"));
@@ -53,14 +62,14 @@ public class Dashboard extends JPanel {
         cardAgendamentos.add(new JScrollPane(listaAgendamentos), BorderLayout.CENTER);
         add(cardAgendamentos);
 
-        // Card Laudos (roxo/laranja)
+        // NOVO: Card Laudos (roxo/laranja)
         JPanel cardLaudos = criarCard("Laudos", "emitir.png", new Color(155, 89, 182));
-        JTextArea laudosArea = new JTextArea("Em breve: listagem de laudos...");
-        laudosArea.setEditable(false);
-        laudosArea.setFont(new Font("Segoe UI", Font.ITALIC, 14));
-        laudosArea.setForeground(Color.decode("#7F8C8D"));
-        laudosArea.setBackground(Color.WHITE);
-        cardLaudos.add(new JScrollPane(laudosArea), BorderLayout.CENTER);
+        laudosModel = new DefaultListModel<>();
+        JList<String> listaLaudos = new JList<>(laudosModel);
+        listaLaudos.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        listaLaudos.setSelectionBackground(new Color(155, 89, 182).brighter());
+        listaLaudos.setSelectionForeground(Color.WHITE);
+        cardLaudos.add(new JScrollPane(listaLaudos), BorderLayout.CENTER);
         add(cardLaudos);
 
         carregarDados();
@@ -126,6 +135,25 @@ public class Dashboard extends JPanel {
         }
         if (agendamentos.isEmpty()) {
             agendamentosModel.addElement("Nenhum agendamento encontrado.");
+        }
+        
+        // NOVO: Laudos
+        List<Laudo> laudos = laudoController.listarLaudosDoCliente(clienteLogado.getIdCliente());
+        laudosModel.clear();
+        count = 1;
+        if (laudos.isEmpty()) {
+            laudosModel.addElement("Nenhum laudo encontrado.");
+        } else {
+            for (Laudo l : laudos) {
+                // Buscando a vistoria e agendamento para detalhes
+                Vistoria vistoria = vistoriaController.buscarVistoria(l.getIdVistoria());
+                if (vistoria != null) {
+                    Agendamento agendamento = agendamentoController.buscarPorId(vistoria.getIdAgendamento());
+                    if (agendamento != null) {
+                        laudosModel.addElement(count++ + " - Vistoria: " + agendamento.getTipo_vistoria() + " (" + vistoria.getDataVistoria() + ")");
+                    }
+                }
+            }
         }
     }
 }

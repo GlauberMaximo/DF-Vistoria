@@ -24,6 +24,7 @@ public class PanelVistoria extends JPanel {
     private DefaultTableModel tableModel;
     private JTextArea txtObservacoes;
     private JComboBox<String> comboResultado;
+    private JComboBox<String> comboFormaPagamento; // NOVO: Adicionando o JComboBox
     private JTextField txtValor;
     private JButton btnSalvar;
 
@@ -88,7 +89,7 @@ public class PanelVistoria extends JPanel {
         header.setBackground(new Color(140, 204, 251));
         header.setForeground(Color.BLACK);
         header.setReorderingAllowed(false);
-        
+
         // Ajusta a largura das colunas
         tabelaAgendamentos.getColumnModel().getColumn(0).setPreferredWidth(40);
         tabelaAgendamentos.getColumnModel().getColumn(1).setPreferredWidth(100);
@@ -108,7 +109,7 @@ public class PanelVistoria extends JPanel {
         // Painel para a área de Observações (título e JTextArea)
         JPanel panelObs = new JPanel(new BorderLayout(0, 5));
         panelObs.setBackground(Color.WHITE);
-        
+
         JLabel lblObservacoes = new JLabel("Observações da Vistoria:");
         lblObservacoes.setFont(new Font("Segoe UI", Font.BOLD, 14));
         panelObs.add(lblObservacoes, BorderLayout.PAGE_START);
@@ -132,7 +133,7 @@ public class PanelVistoria extends JPanel {
         comboResultado.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         comboResultado.setPreferredSize(new Dimension(180, 30));
         panelControles.add(comboResultado);
-        
+
         JLabel lblValor = new JLabel("Valor:");
         lblValor.setFont(new Font("Segoe UI", Font.BOLD, 14));
         panelControles.add(lblValor);
@@ -141,6 +142,16 @@ public class PanelVistoria extends JPanel {
         txtValor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtValor.setPreferredSize(new Dimension(120, 30));
         panelControles.add(txtValor);
+        
+        // NOVO: Adicionar JComboBox para a forma de pagamento
+        JLabel lblFormaPagamento = new JLabel("Forma de Pagamento:");
+        lblFormaPagamento.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        panelControles.add(lblFormaPagamento);
+
+        comboFormaPagamento = new JComboBox<>(new String[]{"DEBITO", "CREDITO", "PIX", "BOLETO", "DINHEIRO"});
+        comboFormaPagamento.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        comboFormaPagamento.setPreferredSize(new Dimension(180, 30));
+        panelControles.add(comboFormaPagamento);
 
         // Adiciona os painéis ao painel de formulário principal
         panelForm.add(panelObs, BorderLayout.CENTER);
@@ -198,6 +209,7 @@ public class PanelVistoria extends JPanel {
                 txtObservacoes.setText("");
                 comboResultado.setSelectedIndex(0);
                 txtValor.setText("");
+                comboFormaPagamento.setSelectedIndex(0);
             }
         }
     }
@@ -236,8 +248,12 @@ public class PanelVistoria extends JPanel {
                 agendamentoSelecionado.getIdAgendamento(), funcionarioLogado.getIdFuncionario());
         vistoriaController.criarVistoria(vistoria);
 
-        // Cria e salva o Pagamento
-        Pagamento pagamento = new Pagamento(FormaPagamento.DINHEIRO, valor, LocalDate.now(), vistoria.getIdVistoria());
+        // NOVO: Pega a forma de pagamento selecionada
+        String formaPagamentoStr = (String) comboFormaPagamento.getSelectedItem();
+        FormaPagamento formaPagamentoEnum = FormaPagamento.valueOf(formaPagamentoStr.toUpperCase());
+
+        // Cria e salva o Pagamento com a forma de pagamento selecionada
+        Pagamento pagamento = new Pagamento(formaPagamentoEnum, valor, LocalDate.now(), vistoria.getIdVistoria());
         pagamentoController.criarPagamento(pagamento);
 
         // CORREÇÃO: Chamada para o método de gerar o laudo
@@ -250,6 +266,7 @@ public class PanelVistoria extends JPanel {
         txtObservacoes.setText("");
         comboResultado.setSelectedIndex(0);
         txtValor.setText("");
+        comboFormaPagamento.setSelectedIndex(0);
         carregarAgendamentosPendentes();
     }
 }

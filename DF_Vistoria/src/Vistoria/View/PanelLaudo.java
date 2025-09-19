@@ -12,218 +12,250 @@ import java.util.Map;
 
 public class PanelLaudo extends JPanel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Cliente clienteLogado;
-    private LaudoController laudoController;
-    private AgendamentoController agendamentoController;
-    private VistoriaController vistoriaController;
-    private ClienteController clienteController;
-    private VeiculoController veiculoController;
-    private PagamentoController pagamentoController;
-    private FuncionarioController funcionarioController;
+	private Cliente clienteLogado;
+	private LaudoController laudoController;
+	private AgendamentoController agendamentoController;
+	private VistoriaController vistoriaController;
+	private ClienteController clienteController;
+	private VeiculoController veiculoController;
+	private PagamentoController pagamentoController;
+	private FuncionarioController funcionarioController;
 
-    private JComboBox<String> comboVistorias;
-    private JPanel painelDetalhesLaudo;
-    private JButton btnImprimir;
+	private JComboBox<String> comboVistorias;
+	private JPanel painelDetalhesLaudo;
+	// Removido: private JButton btnImprimir;
 
-    private Map<String, Integer> mapVistoriaId = new HashMap<>();
-    private boolean isUpdating = false; // Flag para controle
+	private Map<String, Integer> mapVistoriaId = new HashMap<>();
+	private boolean isUpdating = false;
 
-    public PanelLaudo(Cliente cliente) {
-        this.clienteLogado = cliente;
-        
-        this.laudoController = new LaudoController();
-        this.agendamentoController = new AgendamentoController();
-        this.vistoriaController = new VistoriaController();
-        this.clienteController = new ClienteController();
-        this.veiculoController = new VeiculoController();
-        this.pagamentoController = new PagamentoController();
-        this.funcionarioController = new FuncionarioController();
+	public PanelLaudo(Cliente cliente) {
+		this.clienteLogado = cliente;
 
-        setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(20, 20, 20, 20));
-        setBackground(Color.WHITE);
+		this.laudoController = new LaudoController();
+		this.agendamentoController = new AgendamentoController();
+		this.vistoriaController = new VistoriaController();
+		this.clienteController = new ClienteController();
+		this.veiculoController = new VeiculoController();
+		this.pagamentoController = new PagamentoController();
+		this.funcionarioController = new FuncionarioController();
 
-        JPanel painelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        painelSuperior.setBackground(new Color(245, 245, 245));
-        painelSuperior.setBorder(BorderFactory.createTitledBorder("Selecione o Laudo"));
-        
-        comboVistorias = new JComboBox<>();
-        comboVistorias.setPreferredSize(new Dimension(400, 30));
-        comboVistorias.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        comboVistorias.addActionListener(e -> {
-            if (!isUpdating) {
-                exibirDetalhesLaudo();
-            }
-        });
-        
-        painelSuperior.add(new JLabel("Laudo da Vistoria: "));
-        painelSuperior.add(comboVistorias);
-        
-        add(painelSuperior, BorderLayout.NORTH);
+		setLayout(new BorderLayout(10, 10));
+		setBorder(new EmptyBorder(20, 20, 20, 20));
+		setBackground(Color.WHITE);
 
-        painelDetalhesLaudo = new JPanel();
-        painelDetalhesLaudo.setBackground(Color.WHITE);
-        painelDetalhesLaudo.setLayout(new GridBagLayout());
-        painelDetalhesLaudo.setBorder(BorderFactory.createTitledBorder("Detalhes do Laudo"));
+		JPanel painelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		painelSuperior.setBackground(new Color(245, 245, 245));
+		painelSuperior.setBorder(BorderFactory.createTitledBorder("Selecione o Laudo"));
 
-        add(new JScrollPane(painelDetalhesLaudo), BorderLayout.CENTER);
+		comboVistorias = new JComboBox<>();
+		comboVistorias.setPreferredSize(new Dimension(400, 30));
+		comboVistorias.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		comboVistorias.addActionListener(e -> {
+			if (!isUpdating) {
+				exibirDetalhesLaudo();
+			}
+		});
 
-        JPanel painelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        painelInferior.setBackground(Color.WHITE);
-        
-        btnImprimir = new JButton("Imprimir Laudo");
-        btnImprimir.setEnabled(false);
-        btnImprimir.addActionListener(e -> imprimirLaudo());
-        
-        JButton btnBaixarPDF = new JButton("Baixar PDF");
-        btnBaixarPDF.setEnabled(false);
-        btnBaixarPDF.addActionListener(e -> baixarPDF());
+		painelSuperior.add(new JLabel("Laudo da Vistoria: "));
+		painelSuperior.add(comboVistorias);
 
-        painelInferior.add(btnImprimir);
-        painelInferior.add(btnBaixarPDF);
+		add(painelSuperior, BorderLayout.NORTH);
 
-        add(painelInferior, BorderLayout.SOUTH);
+		painelDetalhesLaudo = new JPanel();
+		painelDetalhesLaudo.setBackground(Color.WHITE);
+		painelDetalhesLaudo.setLayout(new GridBagLayout());
+		painelDetalhesLaudo.setBorder(BorderFactory.createTitledBorder("Detalhes do Laudo"));
 
-        carregarListaLaudos();
-    }
+		add(new JScrollPane(painelDetalhesLaudo), BorderLayout.CENTER);
 
-    private void carregarListaLaudos() {
-        isUpdating = true; // Inicia a atualização
-        comboVistorias.removeAllItems();
-        mapVistoriaId.clear();
-        
-        List<Laudo> laudos = laudoController.listarLaudosDoCliente(clienteLogado.getIdCliente());
-        
-        if (laudos.isEmpty()) {
-            comboVistorias.addItem("Nenhum laudo disponível");
-            btnImprimir.setEnabled(false);
-        } else {
-            for (Laudo laudo : laudos) {
-                Agendamento agendamento = agendamentoController.buscarPorId(laudo.getIdVistoria());
-                if (agendamento != null) {
-                    String texto = "Laudo de " + agendamento.getData_agendamento() + " - " + laudo.getIdVistoria();
-                    comboVistorias.addItem(texto);
-                    mapVistoriaId.put(texto, laudo.getIdVistoria());
-                }
-            }
-            if(comboVistorias.getItemCount() > 0){
-                comboVistorias.setSelectedIndex(0);
-                btnImprimir.setEnabled(true);
-            } else {
-                 comboVistorias.addItem("Nenhum laudo disponível");
-                 btnImprimir.setEnabled(false);
-            }
-        }
-        isUpdating = false; // Finaliza a atualização
-    }
+		JPanel painelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+		painelInferior.setBackground(Color.WHITE);
 
-    private void exibirDetalhesLaudo() {
-        String itemSelecionado = (String) comboVistorias.getSelectedItem();
-        
-        painelDetalhesLaudo.removeAll();
-        
-        if (itemSelecionado == null || itemSelecionado.equals("Nenhum laudo disponível")) {
-            painelDetalhesLaudo.revalidate();
-            painelDetalhesLaudo.repaint();
-            return;
-        }
+		// Removemos a criação e adição do botão "Imprimir Laudo"
+		JButton btnBaixarPDF = new JButton("Baixar PDF");
+		btnBaixarPDF.setBackground(new Color(187, 208, 235));
+		btnBaixarPDF.setEnabled(false);
+		btnBaixarPDF.addActionListener(e -> baixarPDF());
 
-        // CORREÇÃO: Verificação adicional para garantir que o item exista no mapa
-        Integer idVistoria = mapVistoriaId.get(itemSelecionado);
-        if (idVistoria == null) {
-            System.err.println("ID da vistoria não encontrado no mapa para o item: " + itemSelecionado);
-            painelDetalhesLaudo.revalidate();
-            painelDetalhesLaudo.repaint();
-            return;
-        }
+		// Apenas adicionamos o botão de baixar PDF
+		painelInferior.add(btnBaixarPDF);
 
-        Vistoria vistoria = vistoriaController.buscarVistoria(idVistoria);
-        Agendamento agendamento = agendamentoController.buscarPorId(vistoria.getIdAgendamento());
-        Veiculo veiculo = veiculoController.buscarPorId(agendamento.getIdVeiculo());
-        Pagamento pagamento = pagamentoController.buscarPagamento(vistoria.getIdVistoria());
-        Funcionario vistoriador = funcionarioController.buscarPorId(vistoria.getIdFuncionario());
+		add(painelInferior, BorderLayout.SOUTH);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
-        
-        JLabel lblTitulo = new JLabel("Relatório de Vistoria");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        painelDetalhesLaudo.add(lblTitulo, gbc);
-        
-        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-        gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 15, 0);
-        painelDetalhesLaudo.add(separator, gbc);
+		carregarListaLaudos();
+	}
 
-        gbc.insets = new Insets(5, 8, 5, 8);
-        gbc.gridwidth = 1;
-        
-        gbc.gridx = 0; gbc.gridy = 2; painelDetalhesLaudo.add(new JLabel("Data da Vistoria:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 2; painelDetalhesLaudo.add(new JLabel(vistoria.getDataVistoria().toString()), gbc);
+	private void carregarListaLaudos() {
+		isUpdating = true;
+		comboVistorias.removeAllItems();
+		mapVistoriaId.clear();
 
-        gbc.gridx = 0; gbc.gridy = 3; painelDetalhesLaudo.add(new JLabel("Cliente:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 3; painelDetalhesLaudo.add(new JLabel(clienteLogado.getNome()), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 4; painelDetalhesLaudo.add(new JLabel("Veículo:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 4; painelDetalhesLaudo.add(new JLabel(veiculo.getNome_veiculo() + " " + veiculo.getModelo()), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 5; painelDetalhesLaudo.add(new JLabel("Placa:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 5; painelDetalhesLaudo.add(new JLabel(veiculo.getPlaca()), gbc);
+		List<Laudo> laudos = laudoController.listarLaudosDoCliente(clienteLogado.getIdCliente());
 
-        gbc.gridx = 0; gbc.gridy = 6; painelDetalhesLaudo.add(new JLabel("Chassi:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 6; painelDetalhesLaudo.add(new JLabel(veiculo.getChassi()), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 7; painelDetalhesLaudo.add(new JLabel("Vistoriador:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 7; painelDetalhesLaudo.add(new JLabel(vistoriador != null ? vistoriador.getNome() : "Não informado"), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 8; painelDetalhesLaudo.add(new JLabel("Resultado:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 8; painelDetalhesLaudo.add(new JLabel(vistoria.getResultado().toString()), gbc);
+		if (laudos.isEmpty()) {
+			comboVistorias.addItem("Nenhum laudo disponível");
+			// Removido: btnImprimir.setEnabled(false);
+		} else {
+			for (Laudo laudo : laudos) {
+				// Correção: A busca por ID de Agendamento deve ser feita com o ID do
+				// Agendamento, não da Vistoria
+				Vistoria vistoria = vistoriaController.buscarVistoria(laudo.getIdVistoria());
+				if (vistoria != null) {
+					Agendamento agendamento = agendamentoController.buscarPorId(vistoria.getIdAgendamento());
+					if (agendamento != null) {
+						String texto = "Laudo de " + agendamento.getData_agendamento() + " - " + laudo.getIdVistoria();
+						comboVistorias.addItem(texto);
+						mapVistoriaId.put(texto, laudo.getIdVistoria());
+					}
+				}
+			}
+			if (comboVistorias.getItemCount() > 0) {
+				comboVistorias.setSelectedIndex(0);
+				// Removido: btnImprimir.setEnabled(true);
+			} else {
+				comboVistorias.addItem("Nenhum laudo disponível");
+				// Removido: btnImprimir.setEnabled(false);
+			}
+		}
+		isUpdating = false;
+	}
 
-        gbc.gridy = 9; gbc.gridwidth = 2; painelDetalhesLaudo.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
+	private void exibirDetalhesLaudo() {
+		String itemSelecionado = (String) comboVistorias.getSelectedItem();
+		painelDetalhesLaudo.removeAll();
 
-        gbc.gridy = 10; gbc.gridwidth = 1; gbc.gridx = 0; painelDetalhesLaudo.add(new JLabel("Valor do Pagamento:"), gbc);
-        gbc.gridx = 1; painelDetalhesLaudo.add(new JLabel(pagamento != null ? "R$ " + pagamento.getValor().toString() : "Pendente"), gbc);
+		if (itemSelecionado == null || itemSelecionado.equals("Nenhum laudo disponível")) {
+			painelDetalhesLaudo.revalidate();
+			painelDetalhesLaudo.repaint();
+			return;
+		}
 
-        gbc.gridy = 11; gbc.gridx = 0; painelDetalhesLaudo.add(new JLabel("Forma de Pagamento:"), gbc);
-        gbc.gridx = 1; painelDetalhesLaudo.add(new JLabel(pagamento != null ? pagamento.getFormaPagamento().toString() : "Pendente"), gbc);
-        
-        gbc.gridy = 12; gbc.gridwidth = 2; painelDetalhesLaudo.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
+		Integer idVistoria = mapVistoriaId.get(itemSelecionado);
+		if (idVistoria == null) {
+			System.err.println("ID da vistoria não encontrado no mapa para o item: " + itemSelecionado);
+			painelDetalhesLaudo.revalidate();
+			painelDetalhesLaudo.repaint();
+			return;
+		}
 
-        JLabel lblObservacoes = new JLabel("Observações:");
-        lblObservacoes.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        gbc.gridy = 13;
-        painelDetalhesLaudo.add(lblObservacoes, gbc);
-        
-        JTextArea txtObservacoes = new JTextArea(vistoria.getObservacoes());
-        txtObservacoes.setEditable(false);
-        txtObservacoes.setLineWrap(true);
-        txtObservacoes.setWrapStyleWord(true);
-        txtObservacoes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JScrollPane scrollObs = new JScrollPane(txtObservacoes);
-        scrollObs.setPreferredSize(new Dimension(400, 100));
-        gbc.gridy = 14;
-        painelDetalhesLaudo.add(scrollObs, gbc);
-        
-        painelDetalhesLaudo.revalidate();
-        painelDetalhesLaudo.repaint();
-    }
+		Vistoria vistoria = vistoriaController.buscarVistoria(idVistoria);
+		if (vistoria == null) {
+			JOptionPane.showMessageDialog(this, "Vistoria não encontrada.", "Erro", JOptionPane.ERROR_MESSAGE);
+			painelDetalhesLaudo.revalidate();
+			painelDetalhesLaudo.repaint();
+			return;
+		}
 
-    private void imprimirLaudo() {
-        JOptionPane.showMessageDialog(this, "Funcionalidade de impressão em desenvolvimento.");
-    }
-    
-    private void baixarPDF() {
-        JOptionPane.showMessageDialog(this, "Funcionalidade de download em PDF em desenvolvimento.");
-    }
+		Agendamento agendamento = agendamentoController.buscarPorId(vistoria.getIdAgendamento());
+		Veiculo veiculo = veiculoController.buscarPorId(agendamento.getIdVeiculo());
+		Pagamento pagamento = pagamentoController.buscarPagamento(vistoria.getIdVistoria());
+		Funcionario vistoriador = funcionarioController.buscarPorId(vistoria.getIdFuncionario());
 
-    public void atualizarLaudos() {
-        carregarListaLaudos();
-    }
+		painelDetalhesLaudo.setLayout(new BorderLayout(10, 10));
+
+		// ===========================
+		// CABEÇALHO
+		// ===========================
+		JPanel cabecalho = new JPanel(new BorderLayout());
+		cabecalho.setBackground(Color.WHITE);
+
+		JLabel lblLogo = new JLabel(new ImageIcon(getClass().getResource("/imagens/logo.png")));
+		cabecalho.add(lblLogo, BorderLayout.WEST);
+
+		JLabel lblTitulo = new JLabel("RELATÓRIO DE VISTORIA", SwingConstants.CENTER);
+		lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		cabecalho.add(lblTitulo, BorderLayout.CENTER);
+
+		JLabel lblData = new JLabel("Emitido em: " + java.time.LocalDate.now(), SwingConstants.RIGHT);
+		lblData.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+		cabecalho.add(lblData, BorderLayout.EAST);
+
+		painelDetalhesLaudo.add(cabecalho, BorderLayout.NORTH);
+
+		// ===========================
+		// CORPO PRINCIPAL
+		// ===========================
+		JPanel corpo = new JPanel();
+		corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
+		corpo.setBackground(Color.WHITE);
+
+		// --- seção dados do laudo ---
+		corpo.add(criarSecao("Dados do Laudo",
+				new String[][] { { "Data da Vistoria:", vistoria.getDataVistoria().toString() },
+						{ "Resultado:", vistoria.getResultado().toString() },
+						{ "Vistoriador:", vistoriador != null ? vistoriador.getNome() : "Não informado" } }));
+
+		// --- seção cliente/veículo ---
+		corpo.add(criarSecao("Cliente e Veículo",
+				new String[][] { { "Cliente:", clienteLogado.getNome() },
+						{ "Veículo:", veiculo.getNome_veiculo() + " " + veiculo.getModelo() },
+						{ "Placa:", veiculo.getPlaca() }, { "Chassi:", veiculo.getChassi() } }));
+
+		// --- seção pagamento ---
+		corpo.add(criarSecao("Pagamento",
+				new String[][] { { "Valor:", pagamento != null ? "R$ " + pagamento.getValor().toString() : "Pendente" },
+						{ "Forma:", pagamento != null ? pagamento.getFormaPagamento().toString() : "Pendente" } }));
+
+		// --- observações ---
+		JPanel panelObs = new JPanel(new BorderLayout());
+		panelObs.setBackground(Color.WHITE);
+		JLabel lblObs = new JLabel("Observações:");
+		lblObs.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		JTextArea txtObs = new JTextArea(vistoria.getObservacoes());
+		txtObs.setLineWrap(true);
+		txtObs.setWrapStyleWord(true);
+		txtObs.setEditable(false);
+		txtObs.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+		panelObs.add(lblObs, BorderLayout.NORTH);
+		panelObs.add(new JScrollPane(txtObs), BorderLayout.CENTER);
+		panelObs.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+		corpo.add(panelObs);
+
+		painelDetalhesLaudo.add(corpo, BorderLayout.CENTER);
+
+		painelDetalhesLaudo.revalidate();
+		painelDetalhesLaudo.repaint();
+	}
+
+	/**
+	 * Cria uma seção de dados em formato de tabela 2 colunas.
+	 */
+	private JPanel criarSecao(String titulo, String[][] dados) {
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setBackground(Color.WHITE);
+		panel.setBorder(BorderFactory.createTitledBorder(titulo));
+
+		JPanel grid = new JPanel(new GridLayout(0, 2, 10, 5));
+		grid.setBackground(Color.WHITE);
+
+		for (String[] linha : dados) {
+			JLabel lblKey = new JLabel(linha[0]);
+			lblKey.setFont(new Font("Segoe UI", Font.BOLD, 13));
+			JLabel lblVal = new JLabel(linha[1]);
+			lblVal.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+			lblVal.setForeground(Color.DARK_GRAY);
+
+			grid.add(lblKey);
+			grid.add(lblVal);
+		}
+
+		panel.add(grid, BorderLayout.CENTER);
+		return panel;
+	}
+
+	// private void imprimirLaudo() {
+	// JOptionPane.showMessageDialog(this, "Funcionalidade de impressão em
+	// desenvolvimento.");
+	// }
+
+	private void baixarPDF() {
+		JOptionPane.showMessageDialog(this, "Funcionalidade de download em PDF em desenvolvimento.");
+	}
+
+	public void atualizarLaudos() {
+		carregarListaLaudos();
+	}
 }

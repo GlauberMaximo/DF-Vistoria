@@ -18,7 +18,7 @@ public class DashboardCliente extends JFrame {
     private PanelAgendarVistoria panelAgendar;
     private PanelCadastrarVeiculo panelCadastrar;
     private Dashboard panelDashboard; 
-    private PanelLaudo panelLaudo; // Referência atualizada para o PanelLaudo
+    private PanelLaudo panelLaudo;
 
     // Construtor atualizado para receber o objeto Cliente
     public DashboardCliente(Cliente cliente) {
