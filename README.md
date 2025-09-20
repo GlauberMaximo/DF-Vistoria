@@ -176,6 +176,7 @@ O sistema utiliza **JDBC** para integração com o banco **MySQL**, garantindo p
 ## 📺 Apresentação
 
 - [Link para apresentação do projeto](https://gamma.app/docs/DF-Vistorias-zfan18gjilzvg5z)
+- [Link para apresentação do projeto](https://www.canva.com/design/DAGzi7SV5CY/159R0DnrUzK8Kuqg1DCmDQ/edit?utm_content=DAGzi7SV5CY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ---
 
