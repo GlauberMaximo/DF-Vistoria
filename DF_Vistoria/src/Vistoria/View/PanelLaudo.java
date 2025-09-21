@@ -67,7 +67,7 @@ public class PanelLaudo extends JPanel {
 		painelDetalhesLaudo.setBackground(Color.WHITE);
 		painelDetalhesLaudo.setLayout(new GridBagLayout());
 		painelDetalhesLaudo.setBorder(BorderFactory.createTitledBorder("Detalhes do Laudo"));
-
+		
 		add(new JScrollPane(painelDetalhesLaudo), BorderLayout.CENTER);
 
 		JPanel painelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
@@ -76,9 +76,9 @@ public class PanelLaudo extends JPanel {
 		// Removemos a criação e adição do botão "Imprimir Laudo"
 		JButton btnBaixarPDF = new JButton("Baixar PDF");
 		btnBaixarPDF.setBackground(new Color(187, 208, 235));
-		btnBaixarPDF.setEnabled(false);
+		btnBaixarPDF.setEnabled(true);
 		btnBaixarPDF.addActionListener(e -> baixarPDF());
-
+		
 		// Apenas adicionamos o botão de baixar PDF
 		painelInferior.add(btnBaixarPDF);
 
@@ -252,7 +252,35 @@ public class PanelLaudo extends JPanel {
 	// }
 
 	private void baixarPDF() {
-		JOptionPane.showMessageDialog(this, "Funcionalidade de download em PDF em desenvolvimento.");
+	    String itemSelecionado = (String) comboVistorias.getSelectedItem();
+	    
+	    if (itemSelecionado == null || itemSelecionado.equals("Nenhum laudo disponível")) {
+	        JOptionPane.showMessageDialog(this, "Nenhum laudo selecionado.", "Atenção", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    Integer idVistoria = mapVistoriaId.get(itemSelecionado);
+	    if (idVistoria == null) {
+	        JOptionPane.showMessageDialog(this, "ID da vistoria não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+	        return;
+	    }
+
+	    // Busca todos os objetos de modelo necessários
+	    Vistoria vistoria = vistoriaController.buscarVistoria(idVistoria);
+	    Agendamento agendamento = agendamentoController.buscarPorId(vistoria.getIdAgendamento());
+	    Veiculo veiculo = veiculoController.buscarPorId(agendamento.getIdVeiculo());
+	    Pagamento pagamento = pagamentoController.buscarPagamento(vistoria.getIdVistoria());
+	    Funcionario vistoriador = funcionarioController.buscarPorId(vistoria.getIdFuncionario());
+	    Cliente cliente = clienteController.buscarClientePorId(clienteLogado.getIdCliente()); // Cliente já está logado
+
+	    if (vistoria == null || agendamento == null || veiculo == null || vistoriador == null) {
+	        JOptionPane.showMessageDialog(this, "Dados do laudo incompletos. Não é possível gerar o PDF.", "Erro", JOptionPane.ERROR_MESSAGE);
+	        return;
+	    }
+
+	    // Instancia e chama a nova classe para gerar o PDF
+	    GerarPdfLaudo gerador = new GerarPdfLaudo();
+	    gerador.gerarPdf(vistoria, cliente, veiculo, pagamento, vistoriador);
 	}
 
 	public void atualizarLaudos() {

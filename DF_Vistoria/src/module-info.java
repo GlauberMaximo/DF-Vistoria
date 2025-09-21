@@ -9,4 +9,5 @@ module DF_Vistoria {
 	requires java.sql;
 	requires com.formdev.flatlaf;
 	requires jcalendar;
+	requires pdfbox.app;
 }
