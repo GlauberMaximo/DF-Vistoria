@@ -63,3 +63,4 @@ select * from agendamento;
 select * from vistoria;
 select * from pagamento;
 select * from funcionario;
+SELECT * FROM desligamento_funcionario;

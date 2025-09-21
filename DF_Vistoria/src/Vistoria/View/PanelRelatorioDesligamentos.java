@@ -20,7 +20,7 @@ public class PanelRelatorioDesligamentos extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        JLabel titulo = new JLabel("📊 Relatório de Desligamentos");
+        JLabel titulo = new JLabel("Relatório de Desligamentos");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
